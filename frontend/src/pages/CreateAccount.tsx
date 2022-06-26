@@ -1,5 +1,6 @@
 import { Box, Button, Heading } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { AiOutlineLock, AiOutlineMail, AiOutlineUser } from 'react-icons/ai';
 import createAccountImage from '../images/create-account.png';
@@ -8,6 +9,7 @@ import FormInput from '../components/Forms/FormInput';
 import { ICreateForm } from '../interfaces';
 import { http } from '../helpers/utils';
 const CreateAccount = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState(createAccountState);
 
   const applyValidationErrors = <T,>(errors: T) => {
@@ -39,13 +41,14 @@ const CreateAccount = () => {
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await http.post('auth/register/', {
+      await http.post('auth/register/', {
         first_name: form.first_name.value,
         last_name: form.last_name.value,
         email: form.email.value,
         password: form.password.value,
         confirm_password: form.confirm_password.value,
       });
+      navigate('/login');
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {
         applyValidationErrors(err.response.data.errors);
