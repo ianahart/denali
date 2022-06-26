@@ -1,4 +1,4 @@
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.db import DatabaseError
 from django.contrib.auth.hashers import check_password
@@ -11,6 +11,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from account.permissions import AccountPermission
 from account.models import CustomUser
+from authentication.serializers import RegisterSerializer
+import json
 
 
 class RegisterAPIView(APIView):
@@ -20,14 +22,19 @@ class RegisterAPIView(APIView):
     permission_classes = [AllowAny, ]
 
     def post(self, request):
-        """
-            A Method that handles the creation of a new user.
-        """
         try:
+            serializer = RegisterSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response({
+                    'errors': serializer.errors,
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            serializer.create(serializer.validated_data)
+
             return Response({
                 'message': 'success'
             }, status=status.HTTP_200_OK)
-        except Exception as e:
+        except ValidationError as e:
             return Response({
-                'message': 'Something went wrong'
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                'errors': {}
+            }, status=status.HTTP_400_BAD_REQUEST)

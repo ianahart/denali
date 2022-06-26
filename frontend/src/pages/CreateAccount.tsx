@@ -10,6 +10,32 @@ import { http } from '../helpers/utils';
 const CreateAccount = () => {
   const [form, setForm] = useState(createAccountState);
 
+  const applyValidationErrors = <T,>(errors: T) => {
+    if (!Object.keys(errors).length) return;
+    for (const [prop, error] of Object.entries(errors)) {
+      setForm((prevState) => ({
+        ...prevState,
+        [prop]: { ...prevState[prop as keyof ICreateForm], error },
+      }));
+    }
+  };
+
+  const togglePasswordVisible = (type: string) => {
+    setForm((prevState) => {
+      return {
+        ...prevState,
+        password: {
+          ...prevState.password,
+          type: type === 'password' ? 'text' : 'password',
+        },
+        confirm_password: {
+          ...prevState.confirm_password,
+          type: type === 'password' ? 'text' : 'password',
+        },
+      };
+    });
+  };
+
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -20,11 +46,9 @@ const CreateAccount = () => {
         password: form.password.value,
         confirm_password: form.confirm_password.value,
       });
-      console.log(response);
     } catch (err: unknown | AxiosError) {
-      console.log(err);
       if (err instanceof AxiosError && err.response) {
-        console.log(err.response);
+        applyValidationErrors(err.response.data.errors);
       }
     }
   };
@@ -62,6 +86,7 @@ const CreateAccount = () => {
           <form onSubmit={handleOnSubmit}>
             <Box display="flex">
               <FormInput
+                togglePasswordVisible={togglePasswordVisible}
                 updateForm={updateForm}
                 name={form.first_name.name}
                 id="first_name"
@@ -72,6 +97,7 @@ const CreateAccount = () => {
                 icon={AiOutlineUser}
               />
               <FormInput
+                togglePasswordVisible={togglePasswordVisible}
                 updateForm={updateForm}
                 name={form.last_name.name}
                 id="last_name"
@@ -84,6 +110,7 @@ const CreateAccount = () => {
             </Box>
 
             <FormInput
+              togglePasswordVisible={togglePasswordVisible}
               updateForm={updateForm}
               name={form.email.name}
               id="email"
@@ -95,22 +122,24 @@ const CreateAccount = () => {
             />
 
             <FormInput
+              togglePasswordVisible={togglePasswordVisible}
               updateForm={updateForm}
               name={form.password.name}
               id="password"
               error={form.password.error}
               value={form.password.value}
-              type="password"
+              type={form.password.type}
               label="Password"
               icon={AiOutlineLock}
             />
             <FormInput
+              togglePasswordVisible={togglePasswordVisible}
               updateForm={updateForm}
               name={form.confirm_password.name}
               id="confirm_password"
               error={form.confirm_password.error}
               value={form.confirm_password.value}
-              type="password"
+              type={form.confirm_password.type}
               label="Confirm Password"
               icon={AiOutlineLock}
             />
