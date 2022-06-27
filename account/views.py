@@ -13,19 +13,23 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from account.permissions import AccountPermission
 from account.models import CustomUser
+from account.serializers import UserSerializer
 
 
 class RetreiveUserAPIView(APIView):
-    permission_classes = [IsAuthenticated, AccountPermission, ]
+    permission_classes = [IsAuthenticated, ]
 
     def get(self, request):
         try:
+            user = CustomUser.objects.user_by_token(
+                request.user,
+                request.headers['authorization'])
+            serializer = UserSerializer(user)
             return Response({
                 'message': 'success',
+                'user': serializer.data
             }, status=status.HTTP_200_OK)
-        except (BadRequest, ObjectDoesNotExist, ) as e:
-            status_code, error = 400, ''
-
+        except BadRequest as e:
             return Response({
-                'errors': str(e)
-            }, status=status_code)
+                            'errors': 'Something went wrong.'
+                            }, status=status.HTTP_400_BAD_REQUEST)

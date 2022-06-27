@@ -1,4 +1,6 @@
+import jwt
 import logging
+from typing import Union
 from core import settings
 from django.core.mail import EmailMessage
 from rest_framework_simplejwt.exceptions import TokenError
@@ -17,11 +19,37 @@ logger = logging.getLogger('django')
 
 class CustomUserManager(BaseUserManager):
 
+    def logout(self, data: dict[str, str | int]):
+        pk, refresh_token = data.values()
+
+        user = CustomUser.objects.get(pk=pk)
+        user.logged_in = False
+        user.save()
+
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+
+    def user_by_token(self, user: 'CustomUser', token: str):
+        """
+            Get the user by header token.
+        """
+        decoded_token = None
+        try:
+            decoded_token = TokenBackend(
+                algorithm='HS256'
+            ).decode(token.split('Bearer ')[1], verify=False)
+
+        except IndexError:
+            logger.error('Malformed token inside get user by token')
+
+        if decoded_token is not None:
+            obj = CustomUser.objects.get(pk=decoded_token['user_id'])
+            return None if obj.pk != user.pk else obj
+
     def create(self, email: str, password: str, **extra_fields):
         """
         Create and save a User with the given email and password.
         """
-        print(extra_fields)
         if not email:
             raise ValueError(_('The Email must be set'))
         email = self.normalize_email(email)
@@ -43,6 +71,32 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
         return self.create(email, password, **extra_fields)
+
+    def __user_exists(self, email: str) -> Union['CustomUser', None]:
+        return CustomUser.objects.all().filter(email=email).first()
+
+    def login(self, email: str, password: str):
+        user = self.__user_exists(email)
+        if user is None:
+            return {'type': 'error', 'msg': 'A user with that email does not exist.'}
+
+        if not hashers.check_password(password, user.password):
+            return {'type': 'error', 'msg': 'Invalid credentials.'}
+
+        user.logged_in = True
+        user.save()
+
+        user.refresh_from_db()
+
+        refresh_token = RefreshToken.for_user(user)
+        access_token = refresh_token.access_token
+        access_token.set_exp(lifetime=timedelta(days=3))
+
+        tokens = {
+            'access_token': str(access_token),
+            'refresh_token': str(refresh_token)
+        }
+        return {'type': 'ok', 'tokens': tokens, 'user': user}
 
 
 class CustomUser(AbstractUser, PermissionsMixin):

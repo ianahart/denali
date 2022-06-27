@@ -1,7 +1,17 @@
-import { Box, Input, ListItem } from '@chakra-ui/react';
+import { Box, Input, ListItem, Text } from '@chakra-ui/react';
+import { useContext, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
+import { BiUserCircle } from 'react-icons/bi';
+import { UserContext } from '../../context/user';
+import { IUserContext } from '../../interfaces';
+import UserMenuContainer from '../Account/UserMenuContainer';
+import UserMenuItems from '../Account/UserMenuItems';
+
 const MenuItems = () => {
+  const { user } = useContext(UserContext) as IUserContext;
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
   return (
     <>
       <Box color="#FFF" position="relative" width="50%">
@@ -28,14 +38,51 @@ const MenuItems = () => {
           <AiOutlineSearch fontSize="2rem" />
         </Box>
       </Box>
+      {user.logged_in && (
+        <ListItem
+          id="trigger"
+          onClick={() => setUserMenuOpen((prevState) => !prevState)}
+          position="relative"
+          cursor="pointer"
+        >
+          <Text
+            mb="0"
+            pointerEvents="none"
+            ml="0.5rem"
+            display="flex"
+            alignItems="end"
+            fontSize="0.9rem"
+            color="#FFF"
+          >
+            Hello, {user.first_name}
+          </Text>
+          <Text pointerEvents="none" fontWeight="bold" color="#FFF">
+            Account
+          </Text>
+        </ListItem>
+      )}
+
+      {userMenuOpen && (
+        <UserMenuContainer userMenuOpen={userMenuOpen} setUserMenuOpen={setUserMenuOpen}>
+          <UserMenuItems />
+        </UserMenuContainer>
+      )}
+
+      {!user.logged_in && (
+        <ListItem m="0.5rem" color="#FFF">
+          <RouterLink to="/create-account">Create Account</RouterLink>
+        </ListItem>
+      )}
+      {!user.logged_in && (
+        <ListItem m="0.5rem" color="#FFF">
+          <RouterLink to="/login">Login</RouterLink>
+        </ListItem>
+      )}
       <ListItem m="0.5rem" color="#FFF">
-        <RouterLink to="/create-account">Create Account</RouterLink>
-      </ListItem>
-      <ListItem m="0.5rem" color="#FFF">
-        <RouterLink to="/login">Login</RouterLink>
-      </ListItem>
-      <ListItem m="0.5rem" color="#FFF">
-        <RouterLink to="orders/32">Orders</RouterLink>
+        <RouterLink to="orders/32">
+          <Text fontSize="0.9rem">Returns & </Text>
+          <Text fontWeight="bold">Orders</Text>
+        </RouterLink>
       </ListItem>
       <ListItem m="0.5rem" color="#FFF">
         <RouterLink to="cart/32">

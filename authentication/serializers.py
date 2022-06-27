@@ -3,6 +3,33 @@ from rest_framework import serializers
 from account.models import CustomUser
 
 
+class LogoutSerializer(serializers.ModelSerializer):
+    refresh_token = serializers.CharField()
+    id = serializers.IntegerField()
+
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'refresh_token', )
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.CharField()
+    password = serializers.CharField()
+
+    class Meta:
+        fields = ('email', 'password', )
+
+    def validate_email(self, email: str):
+        if len(email) == 0:
+            raise serializers.ValidationError('Email cannot be empty.')
+        return email
+
+    def validate_password(self, password: str):
+        if len(password) == 0:
+            raise serializers.ValidationError('Password cannot be empty.')
+        return password
+
+
 class RegisterSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField()
 
@@ -15,22 +42,22 @@ class RegisterSerializer(serializers.ModelSerializer):
                   'confirm_password'
                   )
 
-    def validate_first_name(self, first_name):
+    def validate_first_name(self, first_name: str):
         if len(first_name) == 0:
             raise serializers.ValidationError('First name cannot be empty.')
-        return first_name
+        return first_name.capitalize()
 
-    def validate_last_name(self, last_name):
+    def validate_last_name(self, last_name: str):
         if len(last_name) == 0:
             raise serializers.ValidationError('Last name cannot be empty.')
-        return last_name
+        return last_name.capitalize()
 
-    def validate_email(self, email):
+    def validate_email(self, email: str):
         if len(email) == 0:
             raise serializers.ValidationError('email cannot be empty.')
         return email
 
-    def validate_password(self, password):
+    def validate_password(self, password: str):
         uppercase, lowercase, num = False, False, False
         for char in password:
             if char.lower() == char:
