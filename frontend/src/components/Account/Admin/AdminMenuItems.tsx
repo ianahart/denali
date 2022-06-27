@@ -1,10 +1,11 @@
 import { Box, Heading, UnorderedList, ListItem } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 import Logout from '../../Mixed/Logout';
 const AdminMenuItems = () => {
   return (
     <Box p="0.5rem">
       <Heading textAlign="center" mt="1.5rem" color="text.primary" fontSize="20px">
-        Your Account
+        Admin Panel
       </Heading>
       <Box
         width="150px"
@@ -15,11 +16,18 @@ const AdminMenuItems = () => {
       <UnorderedList
         textAlign="left"
         p="0"
+        mt="1.5rem"
         display="flex"
         flexDir="column"
         justifyContent="center"
         listStyleType="none"
       >
+        <ListItem color="text.primary">
+          <RouterLink color="text.primary" to="/add-item">
+            Add Item
+          </RouterLink>
+        </ListItem>
+
         <Logout />
       </UnorderedList>
     </Box>

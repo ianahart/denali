@@ -56,7 +56,7 @@ const MenuItems = () => {
             Hello, {user.is_superuser ? 'Admin' : user.first_name}
           </Text>
           <Text pointerEvents="none" fontWeight="bold" color="#FFF">
-            Account
+            {user.is_superuser ? 'Admin Panel' : 'Account'}
           </Text>
         </ListItem>
       )}
