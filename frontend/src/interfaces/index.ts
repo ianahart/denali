@@ -25,6 +25,21 @@ export interface ITokens {
   refresh_token: string;
 }
 
+export interface IItem {
+  price: string;
+  id: number;
+  size: string;
+  name: string;
+  description: string;
+  product_url: string;
+  quantity: number;
+}
+
+export interface IAdminSearchResponse {
+  message?: string;
+  item: IItem;
+}
+
 export interface ILoginResponse {
   message?: string;
   user: IUser;

@@ -3,6 +3,33 @@ from rest_framework import serializers
 import re
 
 
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ('price',
+                  'id',
+                  'size',
+                  'description',
+                  'product_url',
+                  'quantity',
+                  'name',
+                  )
+
+
+class SearchSerializer(serializers.Serializer):
+    search_term = serializers.CharField()
+
+    class Meta:
+        model = Item
+        fields = ('search_term', )
+
+    def validate_search_term(self, search_term: str):
+        if len(search_term) == 0 or len(search_term) > 200:
+            raise serializers.ValidationError(
+                'Search term cannot be empty and must be under 200 characters.')
+        return search_term.strip()
+
+
 class CreateItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
@@ -12,7 +39,7 @@ class CreateItemSerializer(serializers.ModelSerializer):
         if len(name) == 0 or len(name) > 200:
             raise serializers.ValidationError(
                 'Name cannot be empty and must be under 200 characters.')
-        return name.strip()
+        return name.capitalize().strip()
 
     def validate_price(self, price: str):
         if len(price) == 0 or len(price) > 50:

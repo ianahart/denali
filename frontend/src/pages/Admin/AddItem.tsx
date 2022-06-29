@@ -1,6 +1,6 @@
 import { Box, Button, ModalOverlay, useDisclosure } from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
-import CheckItemModal from '../../components/Account/Admin/CheckItemModal';
+import CheckItemModal from '../../components/Account/Admin/Items/CheckItemModal';
 import ItemForm from '../../components/Forms/ItemForm';
 import { ItemFormContext } from '../../context/itemForm';
 import { IItemFormContext } from '../../interfaces';
@@ -30,6 +30,7 @@ const AddItem = () => {
         borderBottom="none"
         padding="0.5rem;"
       >
+        <Box height="40px" bg="purple.primary" width="100%"></Box>
         <Box display="flex" flexDir="column" alignItems="start">
           <Button
             onClick={handleOnClearForm}

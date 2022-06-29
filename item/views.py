@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
-from item.serializers import CreateItemSerializer, FileSerializer
+from item.serializers import ItemSerializer, CreateItemSerializer, FileSerializer, SearchSerializer
 from item.services.simplestorage import SimpleStorage
 from item.models import Item
 import json
@@ -15,9 +15,37 @@ import logging
 logger = logging.getLogger('django')
 
 
+class AdminSearchAPIView(APIView):
+    """
+       A view for searching for an item.
+    """
+
+    def post(self, request):
+        try:
+            search_serializer = SearchSerializer(data=request.data)
+            search_serializer.is_valid(raise_exception=True)
+
+            if search_serializer.validated_data:
+                result = Item.objects.search(search_serializer.validated_data)
+                if result['type'] == 'error':
+                    raise BadRequest(result['msg'])
+
+                data = ItemSerializer(result['data'])
+
+                return Response({
+                                'message': 'success',
+                                'item': data.data,
+                                }, status=status.HTTP_200_OK)
+        except BadRequest as e:
+            print(e)
+            return Response({
+                'search_term': [str(e)],
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+
 class AdminListCreateAPIView(APIView):
     """
-       A View for creating an item.
+       A view for creating an item.
     """
     permission_classes = [IsAuthenticated, IsAdminUser, ]
 

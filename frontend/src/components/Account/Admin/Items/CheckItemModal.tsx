@@ -10,11 +10,15 @@ import {
   FormLabel,
   FormControl,
   Input,
+  Text,
 } from '@chakra-ui/react';
 import { AxiosError } from 'axios';
 
 import { useState } from 'react';
-import { http } from '../../../helpers/utils';
+import { adminItemState } from '../../../../helpers/initialState';
+import { http } from '../../../../helpers/utils';
+import { IAdminSearchResponse } from '../../../../interfaces';
+import AdminItem from './AdminItem';
 
 interface CheckItemModalProps {
   overlay: React.ReactNode;
@@ -22,23 +26,30 @@ interface CheckItemModalProps {
   closeModal: () => void;
 }
 const CheckItemModal = ({ overlay, isOpen, closeModal }: CheckItemModalProps) => {
-  const [item, setItem] = useState({});
+  const [item, setItem] = useState(adminItemState);
   const [inputValue, setInputValue] = useState('');
+  const [error, setError] = useState('');
+
   const handleOnClose = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     closeModal();
+    setItem(adminItemState);
+    setInputValue('');
   };
 
   const searchItem = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
       e.stopPropagation();
+      setError('');
       if (!inputValue) return;
 
-      const response = await http.post('/admin/items/search/', inputValue);
-      console.log(response);
+      const response = await http.post<IAdminSearchResponse>('/admin/items/search/', {
+        search_term: inputValue,
+      });
+      setItem(response.data.item);
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {
-        console.log(err.response);
+        setError(err.response.data.search_term[0]);
       }
     }
   };
@@ -48,6 +59,11 @@ const CheckItemModal = ({ overlay, isOpen, closeModal }: CheckItemModalProps) =>
       {overlay}
       <ModalContent>
         <ModalHeader color="text.secondary">Check for Item</ModalHeader>
+        {error && (
+          <Text fontSize="0.85rem" color="text.primary" mt="1rem">
+            {error}
+          </Text>
+        )}
         <ModalCloseButton />
         <ModalBody>
           <FormControl>
@@ -63,6 +79,11 @@ const CheckItemModal = ({ overlay, isOpen, closeModal }: CheckItemModalProps) =>
                 Search
               </Button>
             </Box>
+            {item.id !== 0 && (
+              <Box display="flex" justifyContent="center" my="1.5rem">
+                <AdminItem item={item} />
+              </Box>
+            )}
           </FormControl>
         </ModalBody>
         <ModalFooter>

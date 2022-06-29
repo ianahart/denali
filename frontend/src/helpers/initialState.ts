@@ -1,5 +1,15 @@
 import { retreiveTokens } from './utils';
 
+export const adminItemState = {
+  price: '',
+  id: 0,
+  size: '',
+  description: '',
+  product_url: '',
+  quantity: 0,
+  name: '',
+};
+
 export const createAccountState = {
   first_name: { name: 'first_name', value: '', error: '' },
   last_name: { name: 'last_name', value: '', error: '' },

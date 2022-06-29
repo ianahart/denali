@@ -39,6 +39,15 @@ class ItemManager(models.Manager):
             logger.error('A product with this name already exists')
             return {'type': 'error', 'msg': str(e)}
 
+    def search(self, data: dict[str, str]):
+        item = Item.objects.all().filter(
+            name__iexact=data['search_term']).first()
+
+        if item is None:
+            search_term = data['search_term']
+            return {'type': 'error', 'msg': f'{search_term} does not exist in the inventory.'}
+
+        return {'type': 'ok', 'data': item}
 
 class Item(models.Model):
 
