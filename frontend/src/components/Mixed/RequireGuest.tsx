@@ -1,8 +1,5 @@
-import { useContext } from 'react';
 import { useLocation, Navigate } from 'react-router-dom';
-import { UserContext } from '../../context/user';
 import { retreiveTokens } from '../../helpers/utils';
-import { IUserContext } from '../../interfaces';
 interface Props {
   children: JSX.Element;
 }

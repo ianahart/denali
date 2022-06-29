@@ -60,3 +60,15 @@ body {
     transform: rotate(360deg);
   }
 }
+
+@media (max-width: 880px) {
+  .add-item-container {
+    flex-direction: column-reverse;
+  }
+}
+
+@media (min-width: 900px) {
+  .add-item-container {
+    flex-direction: row;
+  }
+}

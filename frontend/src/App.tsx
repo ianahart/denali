@@ -29,6 +29,10 @@ function App() {
         headers: { Authorization: `Bearer ${tokens.access_token}` },
       });
       setUser(response.data.user);
+      localStorage.setItem(
+        'is_superuser',
+        JSON.stringify(response.data.user.is_superuser)
+      );
     } catch (error: unknown | AxiosError) {
       if (error instanceof AxiosError && error.response) {
         return;

@@ -19,6 +19,7 @@ const Logout = () => {
 
       setUser(userState);
       localStorage.removeItem('tokens');
+      localStorage.removeItem('is_superuser');
       setTokens({ refresh_token: '', access_token: '' });
       navigate('/login');
     } catch (err: unknown | AxiosError) {

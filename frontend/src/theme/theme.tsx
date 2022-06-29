@@ -29,7 +29,7 @@ export const theme = extendTheme({
     },
 
     blue: {
-      primary: '#00bbf9',
+      primary: '#3182ce',
     },
 
     cover: {

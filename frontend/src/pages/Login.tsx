@@ -1,4 +1,4 @@
-import { Box, Button, Heading, Input, Text } from '@chakra-ui/react';
+import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import { useContext, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AiOutlineLock, AiOutlineMail } from 'react-icons/ai';
@@ -42,6 +42,10 @@ const Login = () => {
       });
       setUser(response.data.user);
       stowTokens(response.data.tokens);
+      localStorage.setItem(
+        'is_superuser',
+        JSON.stringify(response.data.user.is_superuser)
+      );
       navigate('/');
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {

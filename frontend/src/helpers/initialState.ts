@@ -13,6 +13,14 @@ export const loginAccountState = {
   password: { name: 'password', value: '', error: '', type: 'password' },
 };
 
+export const itemFormState = {
+  name: { name: 'name', error: '', value: '' },
+  price: { name: 'price', error: '', value: '' },
+  size: { name: 'size', error: '', value: '' },
+  quantity: { name: 'quantity', error: '', value: '0' },
+  description: { name: 'description', error: '', value: '' },
+};
+
 export const userState = {
   id: null,
   is_superuser: false,
