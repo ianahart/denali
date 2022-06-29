@@ -1,10 +1,19 @@
-import { Box, Button } from '@chakra-ui/react';
-import { useContext } from 'react';
+import { Box, Button, ModalOverlay, useDisclosure } from '@chakra-ui/react';
+import { useContext, useEffect, useState } from 'react';
+import CheckItemModal from '../../components/Account/Admin/CheckItemModal';
 import ItemForm from '../../components/Forms/ItemForm';
 import { ItemFormContext } from '../../context/itemForm';
 import { IItemFormContext } from '../../interfaces';
 const AddItem = () => {
   const { clearForm } = useContext(ItemFormContext) as IItemFormContext;
+  const [isOpen, setIsOpen] = useState(false);
+
+  const OverlayOne = () => (
+    <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px) hue-rotate(90deg)" />
+  );
+  const [overlay, setOverlay] = useState(<OverlayOne />);
+
+  const closeModal = () => setIsOpen(false);
 
   const handleOnClearForm = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -37,9 +46,14 @@ const AddItem = () => {
             color="text.primary"
             _hover={{ background: 'transparent', opacity: 0.8 }}
             _active={{ background: 'none' }}
+            onClick={() => {
+              setOverlay(<OverlayOne />);
+              setIsOpen(true);
+            }}
           >
             Check for item
           </Button>
+          <CheckItemModal overlay={overlay} isOpen={isOpen} closeModal={closeModal} />
         </Box>
       </Box>
       <Box padding="0.5rem" minH="100vh" width="100%">
