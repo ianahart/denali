@@ -1,5 +1,5 @@
 from rest_framework.exceptions import ValidationError
-from django.core.exceptions import BadRequest
+from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from rest_framework.decorators import permission_classes
 from rest_framework.views import APIView
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -45,7 +45,7 @@ class AdminSearchAPIView(APIView):
 
 class AdminListCreateAPIView(APIView):
     """
-       A view for creating an item.
+       A view for creating an item and retrieving all items.
     """
     permission_classes = [IsAuthenticated, IsAdminUser, ]
 
@@ -90,3 +90,27 @@ class AdminListCreateAPIView(APIView):
             return Response({
                 'errors': dict(name=[str(e)])},
                 status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        try:
+            result = Item.objects.inventory(
+                request.query_params['page'],
+                request.query_params['direction']
+            )
+            if result['type'] == 'error':
+                raise ObjectDoesNotExist('No more items to be loaded.')
+
+            items_serializer = ItemSerializer(result['items'], many=True)
+
+            return Response({
+                'message': 'success',
+                'items': items_serializer.data,
+                'page_range': result['page_range'],
+                'has_next': result['has_next'],
+                'page': result['page']
+            }, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist as e:
+            print(e)
+            return Response({
+                'errors': str(e)
+            }, status=status.HTTP_404_NOT_FOUND)

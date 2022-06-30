@@ -20,6 +20,14 @@ export interface IUser {
   logged_in: boolean;
 }
 
+export interface AdminItemsResponse {
+  message?: string;
+  has_next: boolean;
+  page: number;
+  items: IItem[];
+  page_range: (string | number)[];
+}
+
 export interface ITokens {
   access_token: string;
   refresh_token: string;

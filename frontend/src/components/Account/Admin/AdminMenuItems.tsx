@@ -23,8 +23,13 @@ const AdminMenuItems = () => {
         listStyleType="none"
       >
         <ListItem color="text.primary">
-          <RouterLink color="text.primary" to="/add-item">
+          <RouterLink color="text.primary" to="/admin/add-item">
             Add Item
+          </RouterLink>
+        </ListItem>
+        <ListItem color="text.primary">
+          <RouterLink color="text.primary" to="/admin/inventory">
+            Inventory
           </RouterLink>
         </ListItem>
 

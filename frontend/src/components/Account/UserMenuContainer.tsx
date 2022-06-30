@@ -39,6 +39,7 @@ const UserMenuContainer = ({
       right={['55px', '150px', '200px']}
       position="absolute"
       width="300px"
+      zIndex="5"
       minH="350px"
       border="1px solid"
       borderColor="#e7ebe7"

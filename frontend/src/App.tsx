@@ -20,6 +20,8 @@ import WithAxios from './helpers/WithAxios';
 import AddItem from './pages/Admin/AddItem';
 import RequireGuest from './components/Mixed/RequireGuest';
 import RequireAdmin from './components/Mixed/RequireAdmin';
+import Inventory from './pages/Admin/AdminInventory';
+import AdminItem from './pages/Admin/AdminItem';
 function App() {
   const { setUser } = useContext(UserContext) as IUserContext;
   const storeUser = useCallback(async () => {
@@ -73,10 +75,27 @@ function App() {
                 <Route path="/orders/:orderId" element={<Orders />} />
                 <Route path="/cart/:id" element={<Cart />} />
                 <Route
-                  path="/add-item"
+                  path="/admin/add-item"
                   element={
                     <RequireAdmin>
                       <AddItem />
+                    </RequireAdmin>
+                  }
+                />
+                <Route
+                  path="/admin/inventory"
+                  element={
+                    <RequireAdmin>
+                      <Inventory />
+                    </RequireAdmin>
+                  }
+                />
+
+                <Route
+                  path="/admin/items/:id"
+                  element={
+                    <RequireAdmin>
+                      <AdminItem />
                     </RequireAdmin>
                   }
                 />

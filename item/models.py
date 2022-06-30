@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime, timedelta, date
+from django.core.paginator import EmptyPage, Paginator
 from django.db.utils import DatabaseError
 from django.utils import timezone
 import logging
@@ -48,6 +49,41 @@ class ItemManager(models.Manager):
             return {'type': 'error', 'msg': f'{search_term} does not exist in the inventory.'}
 
         return {'type': 'ok', 'data': item}
+
+    def inventory(self, prev_page: int, direction: str):
+        """
+            Get inventory.
+        """
+        error = {'type': 'error'}
+
+        objects = Item.objects.order_by('-created_at').all()
+        p = Paginator(objects, 3)
+
+        next_page = None
+        if direction == 'prev':
+            if int(prev_page) - 1 == 0:
+                return error
+            next_page = int(prev_page) - 1
+        else:
+            if p.count == int(prev_page):
+                return error
+            next_page = int(prev_page) + 1
+
+        try:
+            next_page_list = p.page(next_page)
+        except EmptyPage:
+            return error
+        page_range = p.get_elided_page_range(
+            next_page, on_ends=1, on_each_side=2)
+
+        return {
+            'type': 'ok',
+            'page_range': list(page_range),
+            'has_next': next_page_list.has_next(),
+            'items': next_page_list.object_list,
+            'page': next_page
+        }
+
 
 class Item(models.Model):
 
