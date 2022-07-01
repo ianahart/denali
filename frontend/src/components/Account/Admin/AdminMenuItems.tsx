@@ -22,12 +22,12 @@ const AdminMenuItems = () => {
         justifyContent="center"
         listStyleType="none"
       >
-        <ListItem color="text.primary">
+        <ListItem my="0.5rem" color="text.primary">
           <RouterLink color="text.primary" to="/admin/add-item">
             Add Item
           </RouterLink>
         </ListItem>
-        <ListItem color="text.primary">
+        <ListItem my="0.5rem" color="text.primary">
           <RouterLink color="text.primary" to="/admin/inventory">
             Inventory
           </RouterLink>

@@ -8,6 +8,7 @@ import { theme } from './theme/theme';
 import './App.css';
 import Navbar from './components/Navbar';
 import CreateAccount from './pages/CreateAccount';
+import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import Orders from './pages/Orders';
 import { useEffectOnce } from './hooks/UseEffectOnce';
@@ -99,6 +100,7 @@ function App() {
                     </RequireAdmin>
                   }
                 />
+                <Route path="/*" element={<NotFound />} />
               </Routes>
             </WithAxios>
           </Box>

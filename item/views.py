@@ -110,7 +110,28 @@ class AdminListCreateAPIView(APIView):
                 'page': result['page']
             }, status=status.HTTP_200_OK)
         except ObjectDoesNotExist as e:
-            print(e)
+            return Response({
+                'errors': str(e)
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
+class AdminDetailsAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser, ]
+
+    def get(self, request, pk: int):
+        try:
+            result = Item.objects.item(item_id=pk)
+
+            if result['type'] == 'error':
+                raise ObjectDoesNotExist(result['msg'])
+
+            serializer = ItemSerializer(result['item'])
+
+            return Response({
+                'message': 'success',
+                'item': serializer.data,
+            }, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist as e:
             return Response({
                 'errors': str(e)
             }, status=status.HTTP_404_NOT_FOUND)

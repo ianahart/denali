@@ -61,6 +61,14 @@ body {
   }
 }
 
+.admin-item-box-one {
+  flex-grow: 2;
+}
+
+.admin-item-container {
+  width: 1200px;
+}
+
 @media (max-width: 880px) {
   .add-item-container {
     flex-direction: column-reverse;
@@ -70,5 +78,22 @@ body {
 @media (min-width: 900px) {
   .add-item-container {
     flex-direction: row;
+  }
+}
+
+@media (max-width: 1220px) {
+  .admin-item-container {
+    flex-direction: column;
+    width: 100%;
+  }
+  .admin-item-inner-container {
+    width: 600px;
+    margin: 5rem auto 1rem auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-item-inner-container {
+    width: 100%;
   }
 }

@@ -20,6 +20,11 @@ export interface IUser {
   logged_in: boolean;
 }
 
+export interface IAdminItemResponse {
+  message?: string;
+  item: IItem;
+}
+
 export interface AdminItemsResponse {
   message?: string;
   has_next: boolean;

@@ -1,3 +1,5 @@
+from typing import Union
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from datetime import datetime, timedelta, date
 from django.core.paginator import EmptyPage, Paginator
@@ -8,6 +10,20 @@ logger = logging.getLogger('django')
 
 
 class ItemManager(models.Manager):
+
+    def item(self, item_id: int) -> dict[str, Union[str, 'Item']]:
+        """
+            Get a specified item
+        """
+        try:
+            obj = Item.objects.get(pk=item_id)
+            if obj is None:
+                raise ObjectDoesNotExist('Item does not exist')
+
+            return {'type': 'ok', 'item': obj}
+
+        except ObjectDoesNotExist as e:
+            return {'type': 'error', 'msg': str(e)}
 
     def __exists_by_title(self, name: str) -> bool:
         """
