@@ -46,6 +46,8 @@ export interface IItem {
   description: string;
   product_url: string;
   quantity: number;
+  discount: number;
+  discount_price: string;
 }
 
 export interface IAdminSearchResponse {

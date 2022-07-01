@@ -3,7 +3,15 @@ from rest_framework import serializers
 import re
 
 
+class DiscountItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ('discount', )
+
+
 class ItemSerializer(serializers.ModelSerializer):
+    discount_price = serializers.CharField(required=False)
+
     class Meta:
         model = Item
         fields = ('price',
@@ -13,6 +21,8 @@ class ItemSerializer(serializers.ModelSerializer):
                   'product_url',
                   'quantity',
                   'name',
+                  'discount',
+                  'discount_price',
                   )
 
 

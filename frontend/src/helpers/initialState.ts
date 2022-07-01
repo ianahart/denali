@@ -8,6 +8,8 @@ export const adminItemState = {
   product_url: '',
   quantity: 0,
   name: '',
+  discount: 0,
+  discount_price: '',
 };
 
 export const createAccountState = {

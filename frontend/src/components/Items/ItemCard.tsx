@@ -43,6 +43,9 @@ const ItemCard = ({ item, itemPath }: IItemCardProps) => {
             {item.price.split('.')[1] === '00' ? '' : item.price.split('.')[1]}
           </Box>
         </Text>
+        <Text color="purple.primary" fontWeight="bold">
+          {item.discount > 0 ? `%${item.discount} off` : ''}
+        </Text>
       </Box>
     </Box>
   );

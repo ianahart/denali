@@ -12,9 +12,27 @@ const ItemDetails = ({ item }: ItemDetailsProps) => {
         {item.name} {item.size}
       </Heading>
       <Box>
-        <Text my="0.5rem" fontWeight="bold">
-          Price ${item.price}
-        </Text>
+        <Box display="flex">
+          <Box position="relative">
+            <Text my="0.5rem" fontWeight="bold">
+              Price ${item.price}
+            </Text>
+            {item.discount > 0 && (
+              <Box
+                position="absolute"
+                right="0"
+                top="20px"
+                height="2px"
+                width="60px"
+                bg="text.primary"
+                transform="rotate(10deg)"
+              ></Box>
+            )}
+          </Box>
+          {item.discount > 0 && (
+            <Text color="purple.primary">${item.discount_price}</Text>
+          )}
+        </Box>
         <Text my="0.5rem" fontWeight="bold">
           Size {item.size}
         </Text>

@@ -1,4 +1,4 @@
-import { Box, Button, Image } from '@chakra-ui/react';
+import { Box, Button, Image, Input, Text } from '@chakra-ui/react';
 import { AxiosError } from 'axios';
 import { http } from '../../helpers/utils';
 import { useState } from 'react';
@@ -12,15 +12,16 @@ const AdminItem = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [item, setItem] = useState<IItem>(adminItemState);
-
+  const [discount, setDiscount] = useState({ value: '', error: '' });
   const fetchItem = async () => {
     try {
       const response = await http.get<IAdminItemResponse>(`/admin/items/${id}/`);
       setItem(response.data.item);
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {
-        console.log(err.response);
-        navigate('/notfound');
+        if (err.response.status === 404) {
+          navigate('/notfound');
+        }
       }
     }
   };
@@ -29,7 +30,33 @@ const AdminItem = () => {
     fetchItem();
   });
 
-  console.log(item);
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDiscount((prevState) => ({
+      ...prevState,
+      value: e.target.value,
+    }));
+  };
+
+  const changeDiscount = async () => {
+    try {
+      setDiscount((prevState) => ({ ...prevState, error: '' }));
+      const response = await http.patch(`/admin/items/${item.id}/discount/`, {
+        discount: discount.value,
+      });
+      const discounted = response.data.discount;
+      setItem((prevState) => ({ ...prevState, discount: discounted }));
+      setDiscount({ value: '', error: '' });
+    } catch (err: unknown | AxiosError) {
+      if (err instanceof AxiosError && err.response) {
+        const error = err.response.data.discount;
+        setDiscount((prevState) => ({
+          ...prevState,
+          error,
+        }));
+      }
+    }
+  };
+
   return (
     <Box minH="100vh" mt="3rem">
       <Box className="admin-item-container" display="flex" margin="0 auto">
@@ -60,6 +87,21 @@ const AdminItem = () => {
               <Button my="1rem" variant="main">
                 Remove
               </Button>
+            </Box>
+            <Box mt="3rem">
+              <Text color="text.primary">Change Discount:</Text>
+              <Box display="flex">
+                <Input
+                  placeholder="ex 10..."
+                  value={discount.value}
+                  onChange={handleOnChange}
+                  type="text"
+                />
+                <Button onClick={changeDiscount} ml="0.25rem">
+                  Change
+                </Button>
+              </Box>
+              {discount.error && <Text>{discount.error}</Text>}
             </Box>
           </Box>
         </Box>

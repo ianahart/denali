@@ -1,3 +1,4 @@
+from os import walk
 from rest_framework.exceptions import ValidationError
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from rest_framework.decorators import permission_classes
@@ -7,12 +8,39 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
-from item.serializers import ItemSerializer, CreateItemSerializer, FileSerializer, SearchSerializer
+from item.serializers import DiscountItemSerializer, ItemSerializer, CreateItemSerializer, FileSerializer, SearchSerializer
 from item.services.simplestorage import SimpleStorage
 from item.models import Item
 import json
 import logging
 logger = logging.getLogger('django')
+
+
+class AdminDiscountAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser, ]
+
+    """
+        A view for discounting an item
+    """
+
+    def patch(self, request, pk: int):
+        try:
+            serializer = DiscountItemSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            if not serializer.validated_data:
+                raise BadRequest('Unable to change discount.')
+            discount = Item.objects.change_discount(
+                serializer.validated_data['discount'], pk)
+
+            return Response({
+                'message': 'success',
+                'discount': discount
+            }, status=status.HTTP_200_OK)
+        except BadRequest as e:
+            return Response({
+                'errors': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AdminSearchAPIView(APIView):

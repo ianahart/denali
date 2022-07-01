@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Literal, Union
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from datetime import datetime, timedelta, date
@@ -11,12 +11,31 @@ logger = logging.getLogger('django')
 
 class ItemManager(models.Manager):
 
+    def __discount(self, item: 'Item') -> str | Literal[0]:
+        discount_price = float(item.price) - \
+            float(item.price) / 100 * item.discount
+        formatted = "{:.2f}".format(discount_price)
+
+        return 0 if formatted == item.price else formatted
+
+    def change_discount(self, discount: int, pk: int) -> str | Literal[0]:
+        item = Item.objects.get(pk=pk)
+        item.discount = discount
+
+        item.save()
+        item.refresh_from_db()
+        discounted = self.__discount(item)
+
+        return discounted
+
     def item(self, item_id: int) -> dict[str, Union[str, 'Item']]:
         """
             Get a specified item
         """
         try:
             obj = Item.objects.get(pk=item_id)
+            setattr(obj, 'discount_price', self.__discount(obj))
+
             if obj is None:
                 raise ObjectDoesNotExist('Item does not exist')
 
@@ -114,6 +133,7 @@ class Item(models.Model):
     size = models.CharField(max_length=100)
     quantity = models.IntegerField()
     description = models.TextField(max_length=600)
+    discount = models.IntegerField(default=0)
     user = models.ForeignKey(
         'account.CustomUser',
         on_delete=models.CASCADE,
