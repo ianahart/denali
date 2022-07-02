@@ -58,7 +58,12 @@ const AddItem = () => {
         </Box>
       </Box>
       <Box padding="0.5rem" minH="100vh" width="100%">
-        <ItemForm title="Add to Inventory" />
+        <ItemForm
+          item={undefined}
+          title="Add to Inventory"
+          buttonText="Add product"
+          action="post"
+        />
       </Box>
     </Box>
   );

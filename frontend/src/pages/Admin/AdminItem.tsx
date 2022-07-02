@@ -1,6 +1,7 @@
 import { Box, Button, Image, Input, Text } from '@chakra-ui/react';
 import { AxiosError } from 'axios';
 import { http } from '../../helpers/utils';
+import { Link as RouterLink } from 'react-router-dom';
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { adminItemState } from '../../helpers/initialState';
@@ -81,9 +82,11 @@ const AdminItem = () => {
         >
           <Box className="admin-item-inner-container">
             <Box textAlign="center" margin="0 auto" mt="4rem">
-              <Button my="1rem" variant="main">
-                Update
-              </Button>
+              <RouterLink to={`/admin/items/${item.id}/edit`}>
+                <Button my="1rem" variant="main">
+                  Update
+                </Button>
+              </RouterLink>
               <Button my="1rem" variant="main">
                 Remove
               </Button>

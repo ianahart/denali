@@ -34,7 +34,9 @@ const ItemFormContextProvider = ({ children }: IChildren) => {
       formValues['user'] = userId;
     }
     const formData = new FormData();
-    formData.append('file', file ?? '');
+    if (file) {
+      formData.append('file', file ?? '');
+    }
     formData.append('form', JSON.stringify(formValues));
 
     return formData;

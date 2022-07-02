@@ -50,6 +50,12 @@ class SimpleStorage():
         file_path = f'{self.folder}/{uuid.uuid4()}-{date}-{self.file.name}'
         return file_path
 
+    def delete_file(self, filename: str):
+        """
+            delete file on AWS S3 by filename
+        """
+        self.s3.Object(self.bucket_name, filename).delete()  # type:ignore
+
     def upload_file(self) -> dict[str, str]:
         """
             Uploads a file to AWS S3

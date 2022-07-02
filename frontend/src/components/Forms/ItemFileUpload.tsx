@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
-import { Box, Text, Image, Input } from '@chakra-ui/react';
+import { Box, Text, Image, Input, Link } from '@chakra-ui/react';
 import { ItemFormContext } from '../../context/itemForm';
-import { IItemFormContext } from '../../interfaces';
+import { IItem, IItemFormContext } from '../../interfaces';
 
 const ItemFileUpload = () => {
   const { base64, setBase64, file, setFile } = useContext(

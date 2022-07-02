@@ -79,30 +79,31 @@ class AdminListCreateAPIView(APIView):
 
     def post(self, request):
         try:
-            data = json.loads(request.data['form'])
 
             form_serializer = CreateItemSerializer(
                 data=json.loads(request.data['form']))
-            file_serializer = FileSerializer(data=request.data)
 
             response = {}
+            result = None
+            if 'file' in request.data:
+                file_serializer = FileSerializer(
+                    data={'file': request.data['file']})
+
+                if not file_serializer.is_valid():
+                    response['file'] = file_serializer.errors
+
+                if not file_serializer.validated_data:
+                    raise BadRequest
+                simple_storage = SimpleStorage(
+                    file_serializer.validated_data['file'], 'items')
+
+                result = simple_storage.upload_file()
 
             if not form_serializer.is_valid():
                 response['errors'] = form_serializer.errors
 
-            if not file_serializer.is_valid():
-                response['file'] = file_serializer.errors
-
             if len(response) > 0:
                 return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
-            if not file_serializer.validated_data:
-                raise BadRequest
-
-            simple_storage = SimpleStorage(
-                file_serializer.validated_data['file'], 'items')
-
-            result = simple_storage.upload_file()
 
             result = Item.objects.create(
                 file_data=result, data=form_serializer.validated_data)
@@ -113,8 +114,7 @@ class AdminListCreateAPIView(APIView):
             return Response({
                 'message': 'success'
             }, status=status.HTTP_200_OK)
-        except (BadRequest, ) as e:
-            print(e)
+        except (BadRequest, Exception) as e:
             return Response({
                 'errors': dict(name=[str(e)])},
                 status=status.HTTP_400_BAD_REQUEST)
@@ -163,3 +163,48 @@ class AdminDetailsAPIView(APIView):
             return Response({
                 'errors': str(e)
             }, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, pk: int):
+        try:
+            form_serializer = CreateItemSerializer(
+                data=json.loads(request.data['form']))
+
+            response = {}
+            result = None
+            if 'file' in request.data:
+                file_serializer = FileSerializer(
+                    data={'file': request.data['file']})
+
+                if not file_serializer.is_valid():
+                    response['file'] = file_serializer.errors
+
+                if not file_serializer.validated_data:
+                    raise BadRequest
+                simple_storage = SimpleStorage(
+                    file_serializer.validated_data['file'], 'items')
+
+                item = Item.objects.get(pk=pk)
+                simple_storage.delete_file(item.product_filename)
+
+                result = simple_storage.upload_file()
+
+            if not form_serializer.is_valid():
+                response['errors'] = form_serializer.errors
+
+            if len(response) > 0:
+                return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+            result = Item.objects.update(
+                file_data=result, data=form_serializer.validated_data, pk=pk)
+
+            if result['type'] == 'error':
+                raise BadRequest(result['msg'])
+
+            return Response({
+                'message': 'success'
+            }, status=status.HTTP_200_OK)
+
+        except BadRequest as e:
+            print(e)
+            return Response({
+                'errors': dict(name=[str(e)])}, status=status.HTTP_400_BAD_REQUEST)

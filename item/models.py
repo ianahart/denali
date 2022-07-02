@@ -1,5 +1,6 @@
 from typing import Literal, Union
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from datetime import datetime, timedelta, date
 from django.core.paginator import EmptyPage, Paginator
@@ -56,6 +57,10 @@ class ItemManager(models.Manager):
             Create a new item
         """
         try:
+
+            if file_data is None:
+                raise DatabaseError('Please choose a photo for the item.')
+
             if self.__exists_by_title(name=data['name']):
                 raise DatabaseError('A product with this name already exists.')
 
@@ -73,6 +78,24 @@ class ItemManager(models.Manager):
             return {'type': 'ok', 'msg': 'success'}
         except DatabaseError as e:
             logger.error('A product with this name already exists')
+            return {'type': 'error', 'msg': str(e)}
+
+    def update(self, file_data: Union[dict[str, str], None],
+               data, pk: int):
+        try:
+            item = Item.objects.get(pk=pk)
+            for key, value in data.items():
+                setattr(item, key, value)
+
+            if file_data is not None:
+                item.product_url = file_data['product_url']
+                item.product_filename = file_data['product_filename']
+
+            item.save()
+            return {'type': 'ok', 'msg': 'success'}
+
+        except DatabaseError as e:
+            logger.error('Unable to update item from update form.')
             return {'type': 'error', 'msg': str(e)}
 
     def search(self, data: dict[str, str]):

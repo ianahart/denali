@@ -15,16 +15,19 @@ import { ItemFormContext } from '../../context/itemForm';
 import { UserContext } from '../../context/user';
 import { itemFormState } from '../../helpers/initialState';
 import { http } from '../../helpers/utils';
-import { IItemFormContext, IUserContext } from '../../interfaces';
+import { IItemFormContext, IItem, IUserContext, IItemForm } from '../../interfaces';
 import AddItemFormInput from './AddItemFormInput';
 import ItemFileUpload from './ItemFileUpload';
 import loader from '../../images/loader.svg';
 
 interface IItemFormProps {
   title: string;
+  buttonText: string;
+  action: string;
+  item: undefined | IItem;
 }
 
-const ItemForm = ({ title }: IItemFormProps) => {
+const ItemForm = ({ title, buttonText, action, item }: IItemFormProps) => {
   const [resize, setResize] = useState('horizontal');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -37,7 +40,16 @@ const ItemForm = ({ title }: IItemFormProps) => {
     setForm(itemFormState);
     setFile(null);
     setBase64('');
-  }, [setForm, setFile, setBase64]);
+
+    if (item !== undefined) {
+      const form: any = {};
+      Object.entries({ ...item }).forEach(([key, value]) => {
+        form[key] = { name: key, error: '', value: value };
+      });
+      setForm(form);
+      setBase64(item.product_url);
+    }
+  }, [item, setForm, setFile, setBase64]);
 
   const updateForm = (name: string, value: string, key: string) => {
     handleUpdateForm(name, value, key);
@@ -60,15 +72,25 @@ const ItemForm = ({ title }: IItemFormProps) => {
       setError('');
       setLoading(true);
       const formData = getFormValues(form, user.id);
-      const response = await http.post('/admin/items/', formData, {
-        headers: { 'content-type': 'multipart/form-data' },
-      });
-      setLoading(false);
+      let response;
+      if (action === 'post') {
+        response = await http.post('/admin/items/', formData, {
+          headers: { 'content-type': 'multipart/form-data' },
+        });
+      } else {
+        if (item === undefined) return;
+        response = await http.put(`/admin/items/${item.id}/`, formData, {
+          headers: { 'content-type': 'multipart/form-data' },
+        });
+      }
+
       setForm(itemFormState);
+      setLoading(false);
       setFile(null);
       setBase64('');
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {
+        console.log(err.response);
         setLoading(false);
         if (Object.keys(err.response.data).includes('file')) {
           setError(err.response.data.file.file);
@@ -180,7 +202,7 @@ const ItemForm = ({ title }: IItemFormProps) => {
             <Image width="100px" height="100px" src={loader} alt="loading indicator" />
           ) : (
             <Button type="submit" width="50%" variant="main">
-              Add product
+              {buttonText}
             </Button>
           )}
         </Box>

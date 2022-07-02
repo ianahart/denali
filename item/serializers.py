@@ -83,7 +83,7 @@ class CreateItemSerializer(serializers.ModelSerializer):
 
 
 class FileSerializer(serializers.Serializer):
-    file = serializers.ImageField()
+    file = serializers.ImageField(required=False)
 
     class Meta:
         model = Item
