@@ -13,7 +13,7 @@ logger = logging.getLogger('django')
 
 class SimpleStorage():
 
-    def __init__(self, file: InMemoryUploadedFile, folder: str):
+    def __init__(self, file=None, folder="items"):
 
         self.file = file
         self.folder = folder

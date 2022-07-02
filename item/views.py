@@ -164,6 +164,23 @@ class AdminDetailsAPIView(APIView):
                 'errors': str(e)
             }, status=status.HTTP_404_NOT_FOUND)
 
+    def delete(self, request, pk: int):
+        try:
+
+            simple_storage = SimpleStorage()
+            item = Item.objects.get(pk=pk)
+            simple_storage.delete_file(item.product_filename)
+            item.delete()
+
+            return Response({
+                'message': 'success'
+            }, status=status.HTTP_200_OK)
+
+        except BadRequest as e:
+            return Response({
+                'errors': {}
+            }, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request, pk: int):
         try:
             form_serializer = CreateItemSerializer(
@@ -205,6 +222,5 @@ class AdminDetailsAPIView(APIView):
             }, status=status.HTTP_200_OK)
 
         except BadRequest as e:
-            print(e)
             return Response({
                 'errors': dict(name=[str(e)])}, status=status.HTTP_400_BAD_REQUEST)
