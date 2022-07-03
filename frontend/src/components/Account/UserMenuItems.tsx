@@ -1,4 +1,5 @@
 import { Box, Heading, ListItem, UnorderedList, Text } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 import Logout from '../Mixed/Logout';
 
 const UserMenuItems = () => {
@@ -22,6 +23,14 @@ const UserMenuItems = () => {
           justifyContent="center"
           listStyleType="none"
         >
+          <ListItem my="0.5rem" cursor="pointer">
+            <RouterLink to="/shop">
+              <Text color="text.primary" _hover={{ opacity: 0.8 }} role="button">
+                Shop
+              </Text>
+            </RouterLink>
+          </ListItem>
+
           <Logout />
         </UnorderedList>
       </Box>

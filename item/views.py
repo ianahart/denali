@@ -16,6 +16,33 @@ import logging
 logger = logging.getLogger('django')
 
 
+class ListCreateAPIView(APIView):
+    permission_classes = [AllowAny, ]
+
+    def get(self, request):
+        try:
+            result = Item.objects.inventory(
+                request.query_params['page'],
+                request.query_params['direction']
+            )
+            if result['type'] == 'error':
+                raise ObjectDoesNotExist('No more items to be loaded.')
+
+            items_serializer = ItemSerializer(result['items'], many=True)
+
+            return Response({
+                'message': 'success',
+                'items': items_serializer.data,
+                'page_range': result['page_range'],
+                'has_next': result['has_next'],
+                'page': result['page']
+            }, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist as e:
+            return Response({
+                'errors': str(e)
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
 class AdminDiscountAPIView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser, ]
 
