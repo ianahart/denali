@@ -1,42 +1,20 @@
-import { Box, Input, ListItem, Text } from '@chakra-ui/react';
+import { Box, ListItem, Text } from '@chakra-ui/react';
 import { useContext, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
+import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { UserContext } from '../../context/user';
 import { IUserContext } from '../../interfaces';
 import UserMenuContainer from '../Account/UserMenuContainer';
 import UserMenuItems from '../Account/UserMenuItems';
 import AdminMenuItems from '../Account/Admin/AdminMenuItems';
+import Search from '../Items/Search';
 
 const MenuItems = () => {
   const { user } = useContext(UserContext) as IUserContext;
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   return (
     <>
-      <Box color="#FFF" position="relative" width="50%">
-        <Input
-          border="1px solid"
-          borderColor="purple.primary"
-          color="#FFF"
-          width="100%"
-        />
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          flexDir="column"
-          top="1px"
-          height="38px"
-          width="38px"
-          borderRadius="4px"
-          zIndex="3"
-          right="1px"
-          bg="purple.primary"
-          position="absolute"
-        >
-          <AiOutlineSearch fontSize="2rem" />
-        </Box>
-      </Box>
+      <Search />
       {user.logged_in && (
         <ListItem
           id="trigger"
@@ -69,12 +47,20 @@ const MenuItems = () => {
 
       {!user.logged_in && (
         <ListItem m="0.5rem" color="#FFF">
-          <RouterLink to="/create-account">Create Account</RouterLink>
+          <RouterLink to="/create-account">
+            <Box as="span" fontWeight="bold">
+              Create Account
+            </Box>
+          </RouterLink>
         </ListItem>
       )}
       {!user.logged_in && (
         <ListItem m="0.5rem" color="#FFF">
-          <RouterLink to="/login">Login</RouterLink>
+          <RouterLink to="/login">
+            <Box as="span" fontWeight="bold">
+              Login
+            </Box>
+          </RouterLink>
         </ListItem>
       )}
       {user.logged_in && !user.is_superuser && (
@@ -85,6 +71,17 @@ const MenuItems = () => {
           </RouterLink>
         </ListItem>
       )}
+
+      {!user.logged_in && !user.is_superuser && (
+        <ListItem m="0.5rem" color="#FFF">
+          <RouterLink to="/shop">
+            <Text fontWeight="bold" fontSize="0.9rem">
+              Shop
+            </Text>
+          </RouterLink>
+        </ListItem>
+      )}
+
       {user.logged_in && !user.is_superuser && (
         <ListItem m="0.5rem" color="#FFF">
           <RouterLink to="cart/32">

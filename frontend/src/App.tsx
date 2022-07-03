@@ -79,14 +79,7 @@ function App() {
                 <Route path="/orders/:orderId" element={<Orders />} />
                 <Route path="/cart/:id" element={<Cart />} />
 
-                <Route
-                  path="/shop"
-                  element={
-                    <RequireAuth>
-                      <Shop />
-                    </RequireAuth>
-                  }
-                />
+                <Route path="/shop" element={<Shop />} />
 
                 <Route
                   path="/admin/add-item"

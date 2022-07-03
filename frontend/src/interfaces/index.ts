@@ -20,6 +20,20 @@ export interface IUser {
   logged_in: boolean;
 }
 
+export interface ISearchItem {
+  id: number;
+  exerpt: string;
+  product_url: string;
+  name: string;
+}
+
+export interface ISearchResponse {
+  message?: string;
+  has_next: boolean;
+  page: number;
+  items: ISearchItem[];
+}
+
 export interface IAdminItemResponse {
   message?: string;
   item: IItem;

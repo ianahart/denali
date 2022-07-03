@@ -1,6 +1,5 @@
 from typing import Literal, Union
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from datetime import datetime, timedelta, date
 from django.core.paginator import EmptyPage, Paginator
@@ -11,6 +10,28 @@ logger = logging.getLogger('django')
 
 
 class ItemManager(models.Manager):
+
+    def search(self, search_term: str, prev_page: int):
+        objects = Item.objects.all().order_by(
+            'created_at'
+        ).filter(
+            name__icontains=search_term)
+
+        p = Paginator(objects, 3)
+
+        next_page = int(prev_page) + 1
+        has_next = p.page(next_page).has_next()
+        next_page_list = p.page(next_page).object_list
+
+        for item in next_page_list:
+            item.exerpt = item.description[0:30] + '...'
+
+        return {
+            'type': 'ok',
+            'items': next_page_list,
+            'has_next': has_next,
+            'page': next_page,
+        }
 
     def __discount(self, item: 'Item') -> str | Literal[0]:
         discount_price = float(item.price) - \
@@ -98,7 +119,7 @@ class ItemManager(models.Manager):
             logger.error('Unable to update item from update form.')
             return {'type': 'error', 'msg': str(e)}
 
-    def search(self, data: dict[str, str]):
+    def admin_search(self, data: dict[str, str]):
         item = Item.objects.all().filter(
             name__iexact=data['search_term']).first()
 

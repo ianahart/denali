@@ -3,6 +3,33 @@ from rest_framework import serializers
 import re
 
 
+class RetreiveSearchSerializer(serializers.ModelSerializer):
+    exerpt = serializers.CharField()
+
+    class Meta:
+        model = Item
+        fields = ('id', 'exerpt', 'product_url', 'name', )
+
+
+class SearchSerializer(serializers.Serializer):
+    search_term = serializers.CharField()
+    page = serializers.IntegerField()
+
+    class Meta:
+        model = Item
+        fields = ('search_term', 'page', )
+
+    def validate_search_term(self, search_term: str):
+        if len(search_term.strip()) == 0:
+            raise serializers.ValidationError(
+                'Please provide an item to search for.')
+        if len(search_term.strip()) > 200:
+            raise serializers.ValidationError(
+                'A search cannot exceed 200 characters.')
+
+        return search_term
+
+
 class DiscountItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
@@ -26,7 +53,7 @@ class ItemSerializer(serializers.ModelSerializer):
                   )
 
 
-class SearchSerializer(serializers.Serializer):
+class AdminSearchSerializer(serializers.Serializer):
     search_term = serializers.CharField()
 
     class Meta:

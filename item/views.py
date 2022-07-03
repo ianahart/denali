@@ -8,12 +8,40 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
-from item.serializers import DiscountItemSerializer, ItemSerializer, CreateItemSerializer, FileSerializer, SearchSerializer
+from item.serializers import RetreiveSearchSerializer, DiscountItemSerializer, ItemSerializer, CreateItemSerializer, FileSerializer, AdminSearchSerializer, SearchSerializer
 from item.services.simplestorage import SimpleStorage
 from item.models import Item
 import json
 import logging
 logger = logging.getLogger('django')
+
+
+class SearchAPIView(APIView):
+    def post(self, request):
+        try:
+
+            search_serializer = SearchSerializer(data=request.data)
+            search_serializer.is_valid(raise_exception=True)
+
+            if search_serializer.validated_data:
+                results = Item.objects.search(
+                    search_serializer.validated_data['search_term'],
+                    search_serializer.validated_data['page'])
+
+                items = RetreiveSearchSerializer(results['items'], many=True)
+
+                if len(items.data) == 0:
+                    raise ObjectDoesNotExist('No results found')
+                return Response({
+                    'message': 'success',
+                    'items': items.data,
+                    'has_next': results['has_next'],
+                    'page': results['page'],
+                }, status=status.HTTP_200_OK)
+
+        except ObjectDoesNotExist as e:
+            return Response({
+                'errors': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ListCreateAPIView(APIView):
@@ -77,11 +105,12 @@ class AdminSearchAPIView(APIView):
 
     def post(self, request):
         try:
-            search_serializer = SearchSerializer(data=request.data)
+            search_serializer = AdminSearchSerializer(data=request.data)
             search_serializer.is_valid(raise_exception=True)
 
             if search_serializer.validated_data:
-                result = Item.objects.search(search_serializer.validated_data)
+                result = Item.objects.admin_search(
+                    search_serializer.validated_data)
                 if result['type'] == 'error':
                     raise BadRequest(result['msg'])
 
@@ -92,7 +121,6 @@ class AdminSearchAPIView(APIView):
                                 'item': data.data,
                                 }, status=status.HTTP_200_OK)
         except BadRequest as e:
-            print(e)
             return Response({
                 'search_term': [str(e)],
             }, status=status.HTTP_400_BAD_REQUEST)
