@@ -27,6 +27,12 @@ export interface ISearchItem {
   name: string;
 }
 
+export interface IDeliveryDate {
+  day: string;
+  one_week_date: string;
+  remaining_hrs: number;
+}
+
 export interface ISearchResponse {
   message?: string;
   has_next: boolean;
@@ -37,6 +43,14 @@ export interface ISearchResponse {
 export interface IAdminItemResponse {
   message?: string;
   item: IItem;
+}
+
+export interface IItemResponse extends IAdminItemResponse {
+  date: {
+    one_week_date: string;
+    remaining_hrs: number;
+    day: string;
+  };
 }
 
 export interface AdminItemsResponse {

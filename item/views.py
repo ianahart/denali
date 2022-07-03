@@ -16,6 +16,31 @@ import logging
 logger = logging.getLogger('django')
 
 
+class DetailsAPIView(APIView):
+    permission_classes = [AllowAny, ]
+
+    def get(self, request, pk: int):
+        try:
+            result = Item.objects.item(item_id=pk)
+            date = Item.objects.get_delivery_date()
+
+            if result['type'] == 'error':
+                raise ObjectDoesNotExist(result['msg'])
+
+            serializer = ItemSerializer(result['item'])
+
+            return Response({
+                'message': 'success',
+                'item': serializer.data,
+                'date': date,
+            }, status=status.HTTP_200_OK)
+
+        except ObjectDoesNotExist as e:
+            return Response({
+                'errors': str(e)
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
 class SearchAPIView(APIView):
     def post(self, request):
         try:

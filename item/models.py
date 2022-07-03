@@ -11,6 +11,18 @@ logger = logging.getLogger('django')
 
 class ItemManager(models.Manager):
 
+    def get_delivery_date(self) -> dict[str, Union[str, int]]:
+        one_week_ahead = datetime.now() + timedelta(days=7)
+        delivery_date = {
+            'one_week_date': one_week_ahead.strftime('%b %d'),
+            'day': one_week_ahead.strftime('%A'),
+            'remaining_hrs': (24 - (
+                (
+                    datetime.now() - timedelta(days=1)).hour) + 5)
+        }
+
+        return delivery_date
+
     def search(self, search_term: str, prev_page: int):
         objects = Item.objects.all().order_by(
             'created_at'
