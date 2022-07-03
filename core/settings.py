@@ -47,16 +47,15 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'account',
     'authentication',
-    'item'
+    'item',
+    'search',
 ]
 
 
-
-
-AWS_ACCESS_KEY_ID=env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY=env('AWS_SECRET_ACCESS_KEY')
-AWS_DEFAULT_REGION=env('AWS_DEFAULT_REGION')
-AWS_BUCKET=env('AWS_BUCKET')
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_DEFAULT_REGION = env('AWS_DEFAULT_REGION')
+AWS_BUCKET = env('AWS_BUCKET')
 
 
 AUTH_USER_MODEL = 'account.CustomUser'

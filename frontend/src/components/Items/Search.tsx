@@ -1,12 +1,14 @@
 import { Input, Box, Image, Text, Button } from '@chakra-ui/react';
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useContext } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { debounce } from 'lodash';
 import { Link as RouterLink } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { http } from '../../helpers/utils';
-import { ISearchItem, ISearchResponse } from '../../interfaces';
+import { ISearchItem, ISearchResponse, IUserContext } from '../../interfaces';
+import { UserContext } from '../../context/user';
 const Search = () => {
+  const { user } = useContext(UserContext) as IUserContext;
   const [searchValue, setSearchValue] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [items, setItems] = useState<ISearchItem[]>([]);
@@ -82,6 +84,20 @@ const Search = () => {
     }
   };
 
+  const saveItemSearch = async (itemId: number) => {
+    try {
+      setDropdownOpen(false);
+      if (!user.logged_in || (user.logged_in && user.is_superuser)) return;
+      const response = await http.post('/searches/', { item: itemId, user: user.id });
+      console.log(response);
+    } catch (err: unknown | AxiosError) {
+      if (err instanceof AxiosError && err.response) {
+        console.log(err.response);
+        return;
+      }
+    }
+  };
+
   return (
     <Box width="50%" position="relative">
       <Box color="#FFF" width="100%">
@@ -126,7 +142,11 @@ const Search = () => {
           <Box>
             {items.map((item) => {
               return (
-                <RouterLink key={item.id} to={`/items/${item.id}`}>
+                <RouterLink
+                  onClick={() => saveItemSearch(item.id)}
+                  key={item.id}
+                  to={`/items/${item.id}`}
+                >
                   <Box borderBottom="1px solid #2d2d2e" my="0.5rem">
                     <Box p="0.5rem" display="flex" alignItems="center">
                       <Image

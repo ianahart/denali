@@ -26,6 +26,8 @@ import RequireAuth from './components/Mixed/RequireAuth';
 import Inventory from './pages/Admin/AdminInventory';
 import AdminItem from './pages/Admin/AdminItem';
 import Shop from './pages/Shop';
+import SingleItem from './pages/SingleItem';
+
 function App() {
   const { setUser } = useContext(UserContext) as IUserContext;
   const storeUser = useCallback(async () => {
@@ -79,6 +81,7 @@ function App() {
                 <Route path="/orders/:orderId" element={<Orders />} />
                 <Route path="/cart/:id" element={<Cart />} />
 
+                <Route path="/items/:id" element={<SingleItem />} />
                 <Route path="/shop" element={<Shop />} />
 
                 <Route
