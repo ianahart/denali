@@ -11,6 +11,11 @@ logger = logging.getLogger('django')
 
 class ItemManager(models.Manager):
 
+    def update_quantity(self, qty: int, id: int):
+        item = Item.objects.get(pk=id)
+        item.quantity = item.quantity - qty
+        item.save()
+
     def get_delivery_date(self) -> dict[str, Union[str, int]]:
         one_week_ahead = datetime.now() + timedelta(days=7)
         delivery_date = {

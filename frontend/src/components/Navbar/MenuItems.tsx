@@ -3,15 +3,36 @@ import { useContext, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
 import { UserContext } from '../../context/user';
-import { IUserContext } from '../../interfaces';
+import { ICartContext, IUserContext } from '../../interfaces';
 import UserMenuContainer from '../Account/UserMenuContainer';
 import UserMenuItems from '../Account/UserMenuItems';
 import AdminMenuItems from '../Account/Admin/AdminMenuItems';
 import Search from '../Items/Search';
+import { CartContext } from '../../context/cart';
+import { useEffectOnce } from '../../hooks/UseEffectOnce';
+import { AxiosError } from 'axios';
+import { http } from '../../helpers/utils';
 
 const MenuItems = () => {
   const { user } = useContext(UserContext) as IUserContext;
+  const { totalCartItems, setTotalCartItems } = useContext(CartContext) as ICartContext;
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const fetchTotalCartItems = async () => {
+    try {
+      const response = await http.get('/carts/total/');
+      setTotalCartItems(response.data.total);
+    } catch (err: unknown | AxiosError) {
+      if (err instanceof AxiosError && err.response) {
+        return;
+      }
+    }
+  };
+
+  useEffectOnce(() => {
+    fetchTotalCartItems();
+  });
+
   return (
     <>
       <Search />
@@ -83,8 +104,19 @@ const MenuItems = () => {
       )}
 
       {user.logged_in && !user.is_superuser && (
-        <ListItem m="0.5rem" color="#FFF">
-          <RouterLink to="cart/32">
+        <ListItem m="0.5rem" position="relative" color="#FFF">
+          <Box
+            fontWeight="bold"
+            fontSize="1.1rem"
+            color="purple.primary"
+            left="35px"
+            top="-10px"
+            position="absolute"
+          >
+            {totalCartItems > 0 ? totalCartItems : ''}
+          </Box>
+
+          <RouterLink to={`/cart/${user.id}`}>
             <AiOutlineShoppingCart fontSize="2rem" />
           </RouterLink>
         </ListItem>

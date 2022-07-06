@@ -1,12 +1,9 @@
-from django.shortcuts import render
 
-from django.core.exceptions import BadRequest, ObjectDoesNotExist
-from django.db import DatabaseError
+from django.core.exceptions import BadRequest
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from account.permissions import AccountPermission
 from search.serializers import SearchSerializer
 from search.models import Search
 

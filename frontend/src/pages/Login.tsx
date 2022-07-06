@@ -4,14 +4,16 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AiOutlineLock, AiOutlineMail } from 'react-icons/ai';
 import loginImage from '../images/login.png';
 import FormInput from '../components/Forms/FormInput';
-import { ILoginForm, ILoginResponse, IUserContext } from '../interfaces';
+import { ICartContext, ILoginForm, ILoginResponse, IUserContext } from '../interfaces';
 import { loginAccountState } from '../helpers/initialState';
+import { CartContext } from '../context/cart';
 import { AxiosError } from 'axios';
 import { http } from '../helpers/utils';
 import { UserContext } from '../context/user';
 const Login = () => {
   const navigate = useNavigate();
   const { setUser, stowTokens } = useContext(UserContext) as IUserContext;
+  const { setTotalCartItems } = useContext(CartContext) as ICartContext;
   const [form, setForm] = useState(loginAccountState);
   const [errors, setErrors] = useState([]);
 
@@ -32,6 +34,17 @@ const Login = () => {
     }));
   };
 
+  const fetchTotalCartItems = async () => {
+    try {
+      const response = await http.get('/carts/total/');
+      setTotalCartItems(response.data.total);
+    } catch (err: unknown | AxiosError) {
+      if (err instanceof AxiosError && err.response) {
+        console.log(err.response);
+      }
+    }
+  };
+
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -46,6 +59,7 @@ const Login = () => {
         'is_superuser',
         JSON.stringify(response.data.user.is_superuser)
       );
+      await fetchTotalCartItems();
       navigate('/');
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {

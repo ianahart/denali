@@ -79,7 +79,14 @@ function App() {
                   }
                 />
                 <Route path="/orders/:orderId" element={<Orders />} />
-                <Route path="/cart/:id" element={<Cart />} />
+                <Route
+                  path="/cart/:userId"
+                  element={
+                    <RequireAuth>
+                      <Cart />
+                    </RequireAuth>
+                  }
+                />
 
                 <Route path="/items/:id" element={<SingleItem />} />
                 <Route path="/shop" element={<Shop />} />

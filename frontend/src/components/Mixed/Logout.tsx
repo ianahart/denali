@@ -4,11 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { http } from '../../helpers/utils';
 import { userState } from '../../helpers/initialState';
-import { IUserContext } from '../../interfaces';
+import { ICartContext, IUserContext } from '../../interfaces';
 import { UserContext } from '../../context/user';
+import { CartContext } from '../../context/cart';
 
 const Logout = () => {
   const { user, setUser, setTokens, tokens } = useContext(UserContext) as IUserContext;
+  const { setCart, setTotalCartItems, setGrandTotal } = useContext(
+    CartContext
+  ) as ICartContext;
   const navigate = useNavigate();
   const logout = async () => {
     try {
@@ -21,6 +25,9 @@ const Logout = () => {
       localStorage.removeItem('tokens');
       localStorage.removeItem('is_superuser');
       setTokens({ refresh_token: '', access_token: '' });
+      setCart([]);
+      setTotalCartItems(0);
+      setGrandTotal(0);
       navigate('/login');
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {

@@ -33,6 +33,22 @@ export interface IDeliveryDate {
   remaining_hrs: number;
 }
 
+export interface ICart {
+  id: number;
+  item: IItem;
+  total: number;
+  price: number;
+  name: string;
+  quantity: number;
+}
+
+export interface ICartResponse {
+  message?: string;
+  cart: ICart[];
+  has_next: boolean;
+  page: number;
+}
+
 export interface ISearchResponse {
   message?: string;
   has_next: boolean;
@@ -116,4 +132,15 @@ export interface IItemFormContext {
   file: File | null;
   setFile: (file: File | null) => void;
   getFormValues: (form: IItemForm, userId: number | null) => void;
+}
+
+export interface ICartContext {
+  cart: ICart[];
+  totalCartItems: number;
+  grandTotal: number;
+  setCart: (cart: ICart[]) => void;
+  setTotalCartItems: (total: number) => void;
+  setGrandTotal: (grandTotal: number) => void;
+  updateCartItemQuantity: (cartItem: ICart, newQuantity: number) => void;
+  deleteCartItem: (cartItem: ICart) => void;
 }
