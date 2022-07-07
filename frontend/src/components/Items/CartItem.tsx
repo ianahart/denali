@@ -50,6 +50,7 @@ const CartItem = ({ item }: ICartItemProps) => {
         py="0.25rem"
         borderBottom="1px solid #EAEDED"
         display="flex"
+        flexDir={['column', 'column', 'row']}
         justifyContent="space-between"
       >
         <Box display="flex">

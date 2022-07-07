@@ -27,6 +27,7 @@ import Inventory from './pages/Admin/AdminInventory';
 import AdminItem from './pages/Admin/AdminItem';
 import Shop from './pages/Shop';
 import SingleItem from './pages/SingleItem';
+import BillingDetails from './pages/BillingDetails';
 
 function App() {
   const { setUser } = useContext(UserContext) as IUserContext;
@@ -84,6 +85,15 @@ function App() {
                   element={
                     <RequireAuth>
                       <Cart />
+                    </RequireAuth>
+                  }
+                />
+
+                <Route
+                  path="/billing-details/:userId"
+                  element={
+                    <RequireAuth>
+                      <BillingDetails />
                     </RequireAuth>
                   }
                 />

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'item',
     'search',
     'cart',
+    'billing'
 ]
 
 
@@ -248,6 +249,10 @@ EMAIL_PORT = env('EMAIL_PORT')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_SENDER = env('EMAIL_SENDER')
+
+
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
+SITE_URL = 'http://localhost:3000'
 
 
 if DEBUG == 'True':

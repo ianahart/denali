@@ -1,11 +1,12 @@
 import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import { useContext, useState } from 'react';
 import { AxiosError } from 'axios';
-import { useParams } from 'react-router-dom';
+import { BsChevronDoubleRight } from 'react-icons/bs';
+import { Link as RouterLink, useParams } from 'react-router-dom';
 import { CartContext } from '../context/cart';
 import { http } from '../helpers/utils';
 import { useEffectOnce } from '../hooks/UseEffectOnce';
-import { ICartContext, ICartResponse, IUserContext } from '../interfaces';
+import { ICartContext, ICartResponse } from '../interfaces';
 import CartItem from '../components/Items/CartItem';
 
 const Cart = () => {
@@ -19,7 +20,6 @@ const Cart = () => {
   const fetchCart = async (endpoint: string) => {
     try {
       const response = await http.get<ICartResponse>(endpoint);
-      console.log(response);
       //@ts-ignore
       setCart((prevState) => [...prevState, ...response.data.cart]);
 
@@ -92,6 +92,15 @@ const Cart = () => {
                 ${grandTotal.toFixed(2)}
               </Box>
             </Text>
+          </Box>
+          <Box
+            className="billing-link"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <RouterLink to={`/billing-details/${userId}`}>Billing</RouterLink>
+            <BsChevronDoubleRight />
           </Box>
         </Box>
       </Box>

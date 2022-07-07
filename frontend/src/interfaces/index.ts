@@ -6,6 +6,56 @@ export interface ICreateForm {
   confirm_password: { name: string; value: string; error: string; type: string };
 }
 
+export interface IBillingDetailsForm {
+  first_name: {
+    name: string;
+    value: string;
+    error: string;
+    required: boolean;
+    type: string;
+  };
+
+  last_name: {
+    name: string;
+    value: string;
+    error: string;
+    required: boolean;
+    type: string;
+  };
+  company: {
+    name: string;
+    value: string;
+    error: string;
+    required: boolean;
+    type: string;
+  };
+  country: {
+    name: string;
+    value: string;
+    error: string;
+    required: boolean;
+    type: string;
+  };
+  street_address: {
+    name: string;
+    value: string;
+    error: string;
+    required: boolean;
+    type: string;
+  };
+  street_address_2: {
+    name: string;
+    value: string;
+    error: string;
+    required: boolean;
+    type: string;
+  };
+  phone: { name: string; value: string; error: string; required: boolean; type: string };
+  state: { name: string; value: string; error: string; required: boolean; type: string };
+  city: { name: string; value: string; error: string; required: boolean; type: string };
+  zip: { name: string; value: string; error: string; required: boolean; type: string };
+}
+
 export interface ILoginForm {
   email: { name: string; value: string; error: string };
   password: { name: string; value: string; error: string; type: string };

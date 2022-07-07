@@ -12,6 +12,37 @@ export const adminItemState = {
   discount_price: '',
 };
 
+export const billingDetailsState = {
+  first_name: { name: 'first_name', value: '', error: '', type: 'text', required: true },
+  last_name: { name: 'last_name', value: '', error: '', type: 'text', required: true },
+  company: { name: 'company', value: '', error: '', type: 'text', required: false },
+  country: {
+    name: 'country',
+    value: 'United States',
+    error: '',
+    type: 'text',
+    required: true,
+  },
+  street_address: {
+    name: 'street_address',
+    value: '',
+    error: '',
+    type: 'text',
+    required: true,
+  },
+  street_address_2: {
+    name: 'street_address_2',
+    value: '',
+    error: '',
+    type: 'text',
+    required: false,
+  },
+  city: { name: 'city', value: '', error: '', type: 'text', required: true },
+  state: { name: 'state', value: '', error: '', type: 'text', required: true },
+  zip: { name: 'zip', value: '', error: '', type: 'text', required: true },
+  phone: { name: 'phone', value: '', error: '', type: 'text', required: true },
+};
+
 export const createAccountState = {
   first_name: { name: 'first_name', value: '', error: '' },
   last_name: { name: 'last_name', value: '', error: '' },
