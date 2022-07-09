@@ -28,42 +28,28 @@ class StripeCheckoutView(APIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             if serializer.validated_data:
-                billing = Billing.objects.create(serializer.validated_data)
+                billing = Billing.objects.create(serializer.validated_data,
+                                                 request.data['token']['id']
+                                                 )
 
                 Order.objects.create(
-                    request.user, request.data['cart'], billing)
+                    request.user, request.data['cart'],
+                    billing)
 
             total = int(serializer.validated_data['total'])
 
-            checkout_session = stripe.checkout.Session.create(
-                line_items=[
-                    {
-                        'price_data': {
-                            'unit_amount': total * 100,
-                            'currency': 'usd',
-                            'product_data': {
-                                'name': 'Test Product'
-                            },
-                        },
-                        'quantity': 1,
-                    },
-
-
-
-                ],
-                payment_method_types=['card', ],
-                mode='payment',
-                success_url=settings.SITE_URL +
-                '/?success=true&session_id={CHECKOUT_SESSION_ID}',
-                cancel_url=settings.SITE_URL + '/?canceled=true',
+            charge = stripe.Charge.create(
+                amount=total * 100,
+                currency='usd',
+                description=f'Customer : {request.user.email}',
+                source=request.data['token']['id'],
             )
 
             Cart.objects.empty_cart(request.user.id)
             return Response({
-                'session_url': checkout_session.url
+                'message': 'success'
             }, status.HTTP_200_OK)
         except Exception as e:
-            print(e)
             return Response(
                 {'error': 'Something went wrong when creating stripe checkout session'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -82,7 +68,6 @@ class ListCreateAPIView(APIView):
             }, status=status.HTTP_200_OK)
 
         except BadRequest as e:
-            print(e)
             return Response({
                 'errors': {}
             }, status=status.HTTP_400_BAD_REQUEST)

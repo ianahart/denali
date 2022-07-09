@@ -16,7 +16,7 @@ import { useEffectOnce } from './hooks/UseEffectOnce';
 import Cart from './pages/Cart';
 import { retreiveTokens } from './helpers/utils';
 import { UserContext } from './context/user';
-import { IUserContext } from './interfaces';
+import { ICartContext, IUserContext } from './interfaces';
 import { http } from './helpers/utils';
 import WithAxios from './helpers/WithAxios';
 import AddItem from './pages/Admin/AddItem';
@@ -28,9 +28,11 @@ import AdminItem from './pages/Admin/AdminItem';
 import Shop from './pages/Shop';
 import SingleItem from './pages/SingleItem';
 import BillingDetails from './pages/BillingDetails';
+import { CartContext } from './context/cart';
 
 function App() {
-  const { setUser } = useContext(UserContext) as IUserContext;
+  const { setUser, user } = useContext(UserContext) as IUserContext;
+  const { setGrandTotal } = useContext(CartContext) as ICartContext;
   const storeUser = useCallback(async () => {
     try {
       const tokens = retreiveTokens();
@@ -49,8 +51,20 @@ function App() {
     }
   }, [setUser]);
 
+  const retreiveGrandTotal = async () => {
+    try {
+      const response = await http.get('carts/grand-total/');
+      setGrandTotal(response.data.total);
+    } catch (err: unknown | AxiosError) {
+      if (err instanceof AxiosError && err.response) {
+        console.log(err.response);
+      }
+    }
+  };
+
   useEffectOnce(() => {
     storeUser();
+    retreiveGrandTotal();
   });
 
   return (

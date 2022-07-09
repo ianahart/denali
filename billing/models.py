@@ -3,7 +3,7 @@ from django.utils import timezone
 
 
 class BillingManager(models.Manager):
-    def create(self, data):
+    def create(self, data, customer_id: str):
         billing = self.model()
         billing.first_name = data['first_name']
         billing.last_name = data['last_name']
@@ -20,7 +20,8 @@ class BillingManager(models.Manager):
         billing.phone = data['phone']
         billing.user = data['user']
         billing.total = data['total']
-
+        billing.customer_id = customer_id
+        billing.customer_id
         billing.save()
 
         billing.refresh_from_db()
@@ -34,6 +35,7 @@ class Billing(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
     first_name = models.CharField(max_length=200)
+    customer_id = models.CharField(blank=True, null=True, max_length=200)
     last_name = models.CharField(max_length=200)
     company = models.CharField(max_length=200, blank=True, null=True)
     country = models.CharField(max_length=200)

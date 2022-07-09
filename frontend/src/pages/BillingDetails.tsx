@@ -1,21 +1,18 @@
 import { Box, Button, FormLabel, Heading, Select, Text } from '@chakra-ui/react';
 import { useContext, useState, useEffect } from 'react';
-import QueryString from 'query-string';
-import { useLocation } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import { nanoid } from 'nanoid';
 import BillingInput from '../components/Forms/BillingInput';
 import { billingDetailsState } from '../helpers/initialState';
-import { IBillingDetailsForm, ICartContext, IUserContext } from '../interfaces';
+import { IBillingDetailsForm } from '../interfaces';
 import { dataset } from '../helpers/countryDataset';
-import { UserContext } from '../context/user';
-import { AxiosError } from 'axios';
-import { http } from '../helpers/utils';
-import { CartContext } from '../context/cart';
+import CheckoutForm from '../components/Stripe/CheckoutForm';
 
 const BillingDetails = () => {
-  const location = useLocation();
-  const { user } = useContext(UserContext) as IUserContext;
-  const { cart, grandTotal } = useContext(CartContext) as ICartContext;
+  //@ts-ignore
+  const stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY}`);
+
   const [form, setForm] = useState<IBillingDetailsForm>(billingDetailsState);
 
   const updateForm = (name: string, value: string, prop: string) => {
@@ -34,50 +31,6 @@ const BillingDetails = () => {
     }
   };
 
-  useEffect(() => {
-    const values = QueryString.parse(location.search);
-    if (values.success) {
-      console.log('Order placed! you will receive an email confirmation.');
-    }
-
-    if (values.canceled) {
-      console.log(
-        'Order canceled -- continue to shop around and checkout when youre ready'
-      );
-    }
-  }, []);
-
-  const placeOrder = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    try {
-      e.stopPropagation();
-      const data = {
-        cart,
-        user: user.id,
-        total: grandTotal,
-        city: form.city.value,
-        company: form.company.value,
-        country: form.country.value,
-        first_name: form.first_name.value,
-        last_name: form.last_name.value,
-        phone: form.phone.value,
-        state: form.state.value,
-        street_address: form.street_address.value,
-        street_address_2: form.street_address_2.value,
-        zip: form.zip.value,
-      };
-
-      const response = await http.post('/stripe/create-checkout-session/', data);
-      window.location = response.data.session_url;
-    } catch (err: unknown | AxiosError) {
-      if (err instanceof AxiosError && err.response) {
-        console.log(err.response);
-        if (err.response.status === 400) {
-          applyErrors(err.response.data.errors);
-        }
-      }
-    }
-  };
-
   return (
     <Box minH="100vh">
       <Box
@@ -85,6 +38,7 @@ const BillingDetails = () => {
         mt="5rem"
         justifyContent="space-between"
         p="0.5rem"
+        flexDir={['column', 'column', 'row']}
         maxW="1280px"
         minH="100vh"
         display="flex"
@@ -228,10 +182,10 @@ const BillingDetails = () => {
           >
             Your Order
           </Heading>
-          <Box display="flex" my="2rem" justifyContent="center">
-            <Button variant="main" onClick={placeOrder}>
-              Place Order
-            </Button>
+          <Box display="flex" flexDir="column" my="2rem" justifyContent="center">
+            <Elements stripe={stripePromise}>
+              <CheckoutForm applyErrors={applyErrors} form={form} />
+            </Elements>
           </Box>
         </Box>
       </Box>
