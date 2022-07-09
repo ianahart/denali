@@ -3,8 +3,28 @@ from django.utils import timezone
 
 
 class BillingManager(models.Manager):
-    def create(self):
-        pass
+    def create(self, data):
+        billing = self.model()
+        billing.first_name = data['first_name']
+        billing.last_name = data['last_name']
+        if 'company' in data:
+            billing.company = data['company']
+
+        if 'street_address_2' in data:
+            billing.street_address_2 = data['street_address_2']
+        billing.country = data['country']
+        billing.street_address = data['street_address']
+        billing.city = data['city']
+        billing.state = data['state']
+        billing.zip = data['zip']
+        billing.phone = data['phone']
+        billing.user = data['user']
+        billing.total = data['total']
+
+        billing.save()
+
+        billing.refresh_from_db()
+        return billing
 
 
 class Billing(models.Model):
@@ -23,14 +43,9 @@ class Billing(models.Model):
     state = models.CharField(max_length=200)
     zip = models.IntegerField()
     phone = models.CharField(max_length=200)
-    card = models.IntegerField()
+    email = models.CharField(max_length=200, blank=True, null=True)
     total = models.FloatField()
     shipping = models.CharField(max_length=200)
-    item = models.ForeignKey(
-        'item.Item',
-        on_delete=models.CASCADE,
-        related_name="item_billing"
-    )
     user = models.ForeignKey(
         'account.CustomUser',
         on_delete=models.CASCADE,

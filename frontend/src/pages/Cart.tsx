@@ -51,7 +51,7 @@ const Cart = () => {
 
   return (
     <Box minH="100vh" bg="#EAEDED">
-      <Box display="flex" justifyContent="center" maxWidth="1280px">
+      <Box margin="0 auto" display="flex" justifyContent="center" maxWidth="1280px">
         <Box p="0.5rem" mt="5rem" bg="#FFF" minH="500px" width={['100%', '90%', '80%']}>
           <Heading m="1rem" color="text.secondary" fontWeight="400">
             {cart.length === 0 ? 'Your Shopping Cart is Empty' : 'Shopping Cart'}
@@ -89,19 +89,20 @@ const Cart = () => {
             <Text>
               Grand Total:{' '}
               <Box color="green" as="span">
-                ${grandTotal.toFixed(2)}
+                ${grandTotal !== 10 ? grandTotal.toFixed(2) : ''}
               </Box>
             </Text>
           </Box>
-          <Box
-            className="billing-link"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <RouterLink to={`/billing-details/${userId}`}>Billing</RouterLink>
-            <BsChevronDoubleRight />
-          </Box>
+          {cart.length > 0 && (
+            <Box
+              className="billing-link"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <RouterLink to={`/billing-details/${userId}`}>Checkout</RouterLink>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

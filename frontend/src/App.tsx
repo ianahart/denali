@@ -79,7 +79,7 @@ function App() {
                     </RequireGuest>
                   }
                 />
-                <Route path="/orders/:orderId" element={<Orders />} />
+                <Route path="/orders/:userId" element={<Orders />} />
                 <Route
                   path="/cart/:userId"
                   element={

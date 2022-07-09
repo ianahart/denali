@@ -1,16 +1,21 @@
-import { Box, Button, FormLabel, Heading, Select } from '@chakra-ui/react';
-import { useContext, useState } from 'react';
+import { Box, Button, FormLabel, Heading, Select, Text } from '@chakra-ui/react';
+import { useContext, useState, useEffect } from 'react';
+import QueryString from 'query-string';
+import { useLocation } from 'react-router-dom';
 import { nanoid } from 'nanoid';
 import BillingInput from '../components/Forms/BillingInput';
 import { billingDetailsState } from '../helpers/initialState';
-import { IBillingDetailsForm, IUserContext } from '../interfaces';
+import { IBillingDetailsForm, ICartContext, IUserContext } from '../interfaces';
 import { dataset } from '../helpers/countryDataset';
 import { UserContext } from '../context/user';
 import { AxiosError } from 'axios';
 import { http } from '../helpers/utils';
+import { CartContext } from '../context/cart';
 
 const BillingDetails = () => {
+  const location = useLocation();
   const { user } = useContext(UserContext) as IUserContext;
+  const { cart, grandTotal } = useContext(CartContext) as ICartContext;
   const [form, setForm] = useState<IBillingDetailsForm>(billingDetailsState);
 
   const updateForm = (name: string, value: string, prop: string) => {
@@ -29,11 +34,26 @@ const BillingDetails = () => {
     }
   };
 
+  useEffect(() => {
+    const values = QueryString.parse(location.search);
+    if (values.success) {
+      console.log('Order placed! you will receive an email confirmation.');
+    }
+
+    if (values.canceled) {
+      console.log(
+        'Order canceled -- continue to shop around and checkout when youre ready'
+      );
+    }
+  }, []);
+
   const placeOrder = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
       e.stopPropagation();
       const data = {
+        cart,
         user: user.id,
+        total: grandTotal,
         city: form.city.value,
         company: form.company.value,
         country: form.country.value,
@@ -46,13 +66,13 @@ const BillingDetails = () => {
         zip: form.zip.value,
       };
 
-      const response = await http.post('/billing/', data);
-      console.log(response);
+      const response = await http.post('/stripe/create-checkout-session/', data);
+      window.location = response.data.session_url;
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {
         console.log(err.response);
         if (err.response.status === 400) {
-          applyErrors(err.response.data);
+          applyErrors(err.response.data.errors);
         }
       }
     }

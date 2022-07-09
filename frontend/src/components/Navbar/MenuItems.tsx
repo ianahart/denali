@@ -86,7 +86,7 @@ const MenuItems = () => {
       )}
       {user.logged_in && !user.is_superuser && (
         <ListItem m="0.5rem" color="#FFF">
-          <RouterLink to="orders/32">
+          <RouterLink to={`orders/${user.id}`}>
             <Text fontSize="0.9rem">Returns & </Text>
             <Text fontWeight="bold">Orders</Text>
           </RouterLink>

@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'item',
     'search',
     'cart',
-    'billing'
+    'billing',
+    'order',
 ]
 
 

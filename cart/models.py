@@ -9,6 +9,11 @@ logger = logging.getLogger('django')
 
 class CartManager(models.Manager):
 
+    def empty_cart(self, user_id: int):
+        cart_items = Cart.objects.all().filter(user_id=user_id)
+        for cart_item in cart_items:
+            cart_item.delete()
+
     def update_quantity(self, pk: int, quantity: int):
         cart = Cart.objects.get(pk=pk)
         cart.quantity = quantity
@@ -21,7 +26,7 @@ class CartManager(models.Manager):
         for item in items:
             discount = item.price - float((item.item.discount / 100 * 100))
             total += discount * item.quantity
-        return total + 10
+        return total
 
     def total(self, user_id: int) -> int:
         return Cart.objects.all().filter(user_id=user_id).count()

@@ -132,6 +132,19 @@ export interface ITokens {
   refresh_token: string;
 }
 
+export interface IOrder {
+  item_id: number;
+  city: string;
+  name: string;
+  product_url: string;
+  quantity: number;
+  state: string;
+  street_address: string;
+  street_address_2: string;
+  total: number;
+  zip: number;
+}
+
 export interface IItem {
   price: string;
   id: number;
@@ -142,6 +155,13 @@ export interface IItem {
   quantity: number;
   discount: number;
   discount_price: string;
+}
+
+export interface IRetreiveOrdersResponse {
+  orders: IOrder[];
+  has_next: boolean;
+  message?: string;
+  page: number;
 }
 
 export interface IAdminSearchResponse {
