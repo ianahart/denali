@@ -61,7 +61,13 @@ class CartGrandTotalAPIView(APIView):
                 return Response({
                     'message': 'success',
                     'total': total
-                })
+                }, status=status.HTTP_200_OK)
+            else:
+
+                return Response({
+                    'message': 'success',
+                }, status=status.HTTP_200_OK)
+
         except BadRequest:
             return Response({
                 'errors': {}
@@ -78,6 +84,11 @@ class CartTotalAPIView(APIView):
                     'message': 'success',
                     'total': total
                 })
+            else:
+                return Response({
+                    'message': 'success',
+                }, status=status.HTTP_200_OK)
+
         except BadRequest:
             return Response({
                 'errors': {}
