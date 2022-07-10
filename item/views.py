@@ -1,3 +1,4 @@
+from search.models import Search
 from os import walk
 from rest_framework.exceptions import ValidationError
 from django.core.exceptions import BadRequest, ObjectDoesNotExist
@@ -11,9 +12,41 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from item.serializers import RetreiveSearchSerializer, DiscountItemSerializer, ItemSerializer, CreateItemSerializer, FileSerializer, AdminSearchSerializer, SearchSerializer
 from item.services.simplestorage import SimpleStorage
 from item.models import Item
+from order.models import Order
 import json
 import logging
 logger = logging.getLogger('django')
+
+
+class MarketingAPIView(APIView):
+    def get(self, request):
+        try:
+
+            if not request.user.is_authenticated:
+                on_sale_item = Item.objects.random_on_sale()
+                on_sale_serializer = ItemSerializer(on_sale_item)
+                return Response({
+                                'message': 'success',
+                                'on_sale_item': on_sale_serializer.data
+                                })
+
+            searched_item = Search.objects.latest(request.user.id)
+            on_sale_item = Item.objects.random_on_sale()
+            order = Order.objects.latest(request.user.id)
+
+            on_sale_serializer = ItemSerializer(on_sale_item)
+
+            return Response({
+                            'message': 'success',
+                            'searched_item': searched_item,
+                            'on_sale_item': on_sale_serializer.data,
+                            'order': order,
+                            }, status=status.HTTP_200_OK)
+        except (Exception, BadRequest, ) as e:
+            print(e)
+            return Response({
+                            'errors': {}
+                            }, status=status.HTTP_404_NOT_FOUND)
 
 
 class DetailsAPIView(APIView):

@@ -9,6 +9,17 @@ logger = logging.getLogger('django')
 
 
 class SearchManager(models.Manager):
+
+    def latest(self, user_id: int):
+        searched_item = {}
+        object = Search.objects.all().filter(
+            user_id=user_id).latest('created_at')
+        searched_item['name'] = object.item.name
+        searched_item['size'] = object.item.size
+        searched_item['product_url'] = object.item.product_url
+        searched_item['id'] = object.item.id
+        return searched_item
+
     def create(self, user: 'CustomUser', data: dict[str, Union['CustomUser', 'Item']]):
         try:
             already_searched = Search.objects.all().filter(

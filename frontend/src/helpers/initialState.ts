@@ -12,6 +12,13 @@ export const adminItemState = {
   discount_price: '',
 };
 
+export const marketingItemState = {
+  id: 0,
+  name: '',
+  product_url: '',
+  size: '',
+};
+
 export const billingDetailsState = {
   first_name: { name: 'first_name', value: '', error: '', type: 'text', required: true },
   last_name: { name: 'last_name', value: '', error: '', type: 'text', required: true },

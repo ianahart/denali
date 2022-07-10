@@ -6,6 +6,17 @@ from django.core.paginator import Paginator
 
 class OrderManager(models.Manager):
 
+    def latest(self, user_id: int):
+        order_item = {}
+        object = Order.objects.all().filter(
+            user_id=user_id).latest('created_at')
+        order_item['name'] = object.item.name
+        order_item['size'] = object.item.size
+        order_item['product_url'] = object.item.product_url
+        order_item['id'] = object.item.id,
+        order_item['id'] = order_item['id'][0]
+        return order_item
+
     def retreive_orders(self, page: int, user_id: int):
         objects = Order.objects.all().order_by('id').filter(user_id=user_id)
 

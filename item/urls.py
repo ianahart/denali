@@ -9,4 +9,5 @@ urlpatterns = [
          views.AdminDiscountAPIView.as_view()),
     path('admin/items/search/', views.AdminSearchAPIView.as_view()),
     path('items/search/', views.SearchAPIView.as_view()),
+    path('items/marketing/', views.MarketingAPIView.as_view()),
 ]

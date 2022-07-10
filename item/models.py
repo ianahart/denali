@@ -1,3 +1,4 @@
+import random
 from typing import Literal, Union
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -10,6 +11,13 @@ logger = logging.getLogger('django')
 
 
 class ItemManager(models.Manager):
+
+    def random_on_sale(self):
+        items = Item.objects.all().filter(discount__gt=0)
+        random_index = random.randint(0, len(items) - 1)
+        random_item = items[random_index]
+        setattr(random_item, 'discount_price', self.__discount(random_item))
+        return random_item
 
     def update_quantity(self, qty: int, id: int):
         item = Item.objects.get(pk=id)

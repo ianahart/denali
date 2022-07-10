@@ -157,6 +157,20 @@ export interface IItem {
   discount_price: string;
 }
 
+export interface IMarketingItem {
+  name: string;
+  id: number;
+  product_url: string;
+  size: string;
+}
+
+export interface IMarketingResponse {
+  on_sale_item: IItem;
+  message?: string;
+  order: IMarketingItem;
+  searched_item: IMarketingItem;
+}
+
 export interface IRetreiveOrdersResponse {
   orders: IOrder[];
   has_next: boolean;
