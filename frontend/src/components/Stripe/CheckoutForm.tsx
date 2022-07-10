@@ -1,5 +1,5 @@
-import React, { useState, useContext, useMemo } from 'react';
-import { Button, Image, Box, Text } from '@chakra-ui/react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
+import { Button, Image, Box, Text, Stack, Radio, RadioGroup } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { IBillingDetailsForm, ICartContext, IUserContext } from '../../interfaces';
@@ -40,6 +40,8 @@ const CheckoutForm = ({ form, applyErrors }: ICheckoutFormProps) => {
   const { grandTotal, cart } = useContext(CartContext) as ICartContext;
   const [loaded, setLoaded] = useState(true);
   const [successMsg, setSuccessMsg] = useState('');
+  const [radioValue, setRadioValue] = useState('500');
+  const [shippingType, setShippingType] = useState('Standard Shipping 5-10 Days');
   const stripe = useStripe();
   const elements = useElements();
 
@@ -61,12 +63,25 @@ const CheckoutForm = ({ form, applyErrors }: ICheckoutFormProps) => {
     }
   };
 
+  useEffect(() => {
+    console.log(radioValue);
+    if (radioValue === '5000') {
+      setShippingType('Standard Shipping 5-10 Days');
+    } else if (radioValue === '1000') {
+      setShippingType('Priority Shipping 1-2 Days');
+    } else {
+      setShippingType('Express Shipping Overnight');
+    }
+  }, [radioValue]);
+
   const stripeTokenHandler = async <T,>(token: T) => {
     try {
       setLoaded(false);
       const data = {
         token,
         cart,
+        shipping: parseInt(radioValue),
+        shipping_type: shippingType,
         user: user.id,
         total: grandTotal,
         city: form.city.value,
@@ -101,32 +116,75 @@ const CheckoutForm = ({ form, applyErrors }: ICheckoutFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="stripe-form">
-      <label>
-        Card details
-        <CardElement options={CARD_ELEMENT_OPTIONS} />
-      </label>
+    <>
+      <RadioGroup mb="1.2rem" onChange={setRadioValue} value={radioValue}>
+        <Stack direction="column">
+          <Radio my="0.5rem" colorScheme="purple" value="500">
+            <Box display="flex" justifyContent="space-between">
+              <Box>
+                Standard Shipping
+                <Box>5-10 Days</Box>
+              </Box>
+              <Box ml="2rem">$5.00</Box>
+            </Box>
+          </Radio>
+          <Radio my="0.5rem" colorScheme="purple" value="1000">
+            <Box display="flex" justifyContent="space-between">
+              <Box>
+                Priority Shpping
+                <Box>1-2 Days</Box>
+              </Box>
+              <Box ml="2rem">$10.00</Box>
+            </Box>
+          </Radio>
+          <Radio my="0.5rem" colorScheme="purple" value="1500">
+            <Box display="flex" justifyContent="space-between">
+              <Box>
+                Express Shipping
+                <Box>Overnight</Box>
+              </Box>
+              <Box ml="2rem">$15.00</Box>
+            </Box>
+          </Radio>
+        </Stack>
+      </RadioGroup>
+      <form onSubmit={handleSubmit} className="stripe-form">
+        <label>
+          Card details
+          <CardElement options={CARD_ELEMENT_OPTIONS} />
+        </label>
 
-      {successMsg.length > 0 && (
-        <Box display="flex" flexDir="column" alignItems="center" justifyContent="center">
-          <AiOutlineCheckCircle fontSize="2rem" color="purple.primary" />
-          <Text textAlign="center" color="purple.primary">
-            {successMsg}
-          </Text>
-        </Box>
-      )}
+        {successMsg.length > 0 && (
+          <Box
+            display="flex"
+            flexDir="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <AiOutlineCheckCircle fontSize="2rem" color="purple.primary" />
+            <Text textAlign="center" color="purple.primary">
+              {successMsg}
+            </Text>
+          </Box>
+        )}
 
-      {loaded ? (
-        <Button variant="main" type="submit" disabled={!stripe}>
-          Pay
-        </Button>
-      ) : (
-        <Box display="flex" flexDir="column" alignItems="center" justifyContent="center">
-          <Text color="purple.primary">Processing payment</Text>
-          <Image height="100px" width="100px" src={loader} alt="loader" />
-        </Box>
-      )}
-    </form>
+        {loaded ? (
+          <Button variant="main" type="submit" disabled={!stripe}>
+            Pay
+          </Button>
+        ) : (
+          <Box
+            display="flex"
+            flexDir="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text color="purple.primary">Processing payment</Text>
+            <Image height="100px" width="100px" src={loader} alt="loader" />
+          </Box>
+        )}
+      </form>
+    </>
   );
 };
 

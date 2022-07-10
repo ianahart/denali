@@ -20,7 +20,6 @@ class StripeCheckoutView(APIView):
 
     def post(self, request):
         try:
-
             serializer = CreateBillingSerializer(data=request.data)
             if not serializer.is_valid():
                 return Response({
@@ -37,19 +36,25 @@ class StripeCheckoutView(APIView):
                     billing)
 
             total = int(serializer.validated_data['total'])
-
-            charge = stripe.Charge.create(
-                amount=total * 100,
+            shipping = int(serializer.validated_data['shipping'])
+            stripe.Charge.create(
+                amount=total * 100 + shipping,
                 currency='usd',
                 description=f'Customer : {request.user.email}',
                 source=request.data['token']['id'],
             )
 
+            Billing.objects.send_confirmation_email(
+                request.data['cart'],
+                request.data['user'],
+                request.data['shipping_type'],
+                request.data['shipping']
+            )
             Cart.objects.empty_cart(request.user.id)
             return Response({
                 'message': 'success'
             }, status.HTTP_200_OK)
-        except Exception as e:
+        except Exception:
             return Response(
                 {'error': 'Something went wrong when creating stripe checkout session'},
                 status=status.HTTP_400_BAD_REQUEST

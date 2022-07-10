@@ -26,6 +26,8 @@ class CreateBillingSerializer(serializers.ModelSerializer):
             'country',
             'first_name',
             'last_name',
+            'shipping',
+            'shipping_type',
             'phone',
             'state',
             'street_address',

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        a {
+            color: #C42CB0
+        }
+
+        .total {
+            color: green;
+        }
+        img {
+            width: 70px;
+            height: 70px;
+        }
+    </style>
+    </head>
+<body>
+  <br>
+
+        <h2>Hi {{email}}, </h2>
+        <p>Here is your order confirmation:</p>
+        <p>{{shipping_type}}</p>
+        <p>With shipping ${{grand_total}}</p>
+  <br>
+  <br>
+    {%for item in cart_items%}
+        <p>{{item.name}}<p>
+        <img src="{{item.product_url}}" alt="snowboard" />
+        <p>{{item.quantity}}x</p>
+        <p className="total">${{item.total}}</p>
+    {% endfor %}
+  <p>Thanks for choosing us to do business with!</p>
+  <p>-Denali</p>
+  <br>
+  <br>
+
+</html>
+
