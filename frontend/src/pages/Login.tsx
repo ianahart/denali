@@ -133,6 +133,14 @@ const Login = () => {
               icon={AiOutlineLock}
             />
           </Box>
+          <Box display="flex" justifyContent="flex-end" p="0.25rem">
+            <RouterLink
+              style={{ color: '#9b5de5', fontSize: '0.85rem' }}
+              to="/forgot-password"
+            >
+              Forgot Password ?
+            </RouterLink>
+          </Box>
           <Box display="flex" pt="1.5rem" justifyContent="center">
             <Button type="submit" variant="main">
               Login

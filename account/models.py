@@ -20,6 +20,38 @@ logger = logging.getLogger('django')
 
 class CustomUserManager(BaseUserManager):
 
+    def forgot_password_email(self, email: str):
+        user = CustomUser.objects.all().filter(email=email).first()
+
+        if user is None:
+            return {
+                'type': 'error',
+                'msg': 'A user with this email does not exist.'
+            }
+
+        token = str(RefreshToken.for_user(user))
+
+        cxt = {'token': token, 'email': user.email}
+        message = render_to_string('forgot-password.html', cxt)
+
+        mail = EmailMessage(
+            subject='Password Reset:',
+            body=message,
+            from_email=settings.EMAIL_SENDER,
+            to=[user.email]
+        )
+        mail.content_subtype = 'html'
+        mail.send()
+
+        return {'type': 'ok',
+                'uid': user.id,
+                'token': token
+        }
+
+
+
+
+
     def logout(self, data: dict[str, str | int]):
         pk, refresh_token = data.values()
 

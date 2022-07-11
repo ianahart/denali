@@ -6,6 +6,11 @@ export interface ICreateForm {
   confirm_password: { name: string; value: string; error: string; type: string };
 }
 
+export interface IPasswordForm {
+  password: { name: string; value: string; error: string; type: string };
+  confirm_password: { name: string; value: string; error: string; type: string };
+}
+
 export interface IBillingDetailsForm {
   first_name: {
     name: string;

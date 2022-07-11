@@ -19,6 +19,11 @@ export const marketingItemState = {
   size: '',
 };
 
+export const PasswordResetState = {
+  password: { name: 'password', value: '', error: '', type: 'password' },
+  confirm_password: { name: 'confirm_password', value: '', error: '', type: 'password' },
+};
+
 export const billingDetailsState = {
   first_name: { name: 'first_name', value: '', error: '', type: 'text', required: true },
   last_name: { name: 'last_name', value: '', error: '', type: 'text', required: true },

@@ -29,6 +29,8 @@ import Shop from './pages/Shop';
 import SingleItem from './pages/SingleItem';
 import BillingDetails from './pages/BillingDetails';
 import { CartContext } from './context/cart';
+import ForgotPassword from './pages/ForgotPassword';
+import PasswordReset from './pages/PasswordReset';
 
 function App() {
   const { setUser, user } = useContext(UserContext) as IUserContext;
@@ -76,6 +78,8 @@ function App() {
             <WithAxios>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/password-reset" element={<PasswordReset />} />
 
                 <Route
                   path="/create-account"
