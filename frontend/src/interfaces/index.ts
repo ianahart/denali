@@ -108,6 +108,11 @@ export interface IReview {
   id: number;
 }
 
+export interface IReviewStats {
+  percent: number;
+  rating: number;
+}
+
 export interface ICartResponse {
   message?: string;
   cart: ICart[];
@@ -127,6 +132,7 @@ export interface IReviewsResponse {
   has_next: boolean;
   page: number;
   reviews: IReview[];
+  stats: IReviewStats[];
 }
 
 export interface IAdminItemResponse {

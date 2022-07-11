@@ -7,9 +7,26 @@ logger = logging.getLogger('django')
 
 class ReviewManager(models.Manager):
 
+    def __rating_stats(self, reviews: models.QuerySet['Review']):
+        if len(reviews) == 0:
+            return []
+
+        stats = []
+        for i in range(1, 5 + 1):
+            count = len(
+                [review for review in reviews if review.rating == i])
+            stats.append({
+                'percent': int(count / len(reviews) * 100),
+                'rating': i
+            })
+
+        return stats
+
     def retreive(self, item_id: int, page: int):
         objects = Review.objects.all().order_by('created_at').filter(
             item_id=item_id)
+
+        stats = self.__rating_stats(objects)
 
         p = Paginator(objects, 2)
 
@@ -26,7 +43,8 @@ class ReviewManager(models.Manager):
         return {
             'page': next_page,
             'has_next': has_next,
-            'reviews': next_page_list
+            'reviews': next_page_list,
+            'stats': stats,
         }
 
     def create(self, data):

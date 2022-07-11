@@ -23,7 +23,8 @@ class ListCreateAPIView(APIView):
                 'message': 'success',
                 'page': reviews['page'],
                 'has_next': reviews['has_next'],
-                'reviews': serializer.data
+                'reviews': serializer.data,
+                'stats': reviews['stats'],
             }, status=status.HTTP_200_OK)
         except BadRequest as e:
             return Response({

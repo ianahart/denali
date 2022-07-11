@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Button, Image, Heading } from '@chakra-ui/react';
+import { Box, Button, Image, Heading, Text } from '@chakra-ui/react';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { AiFillStar } from 'react-icons/ai';
+import { nanoid } from 'nanoid';
 import { useEffectOnce } from '../hooks/UseEffectOnce';
 import {
   IItem,
@@ -10,6 +11,7 @@ import {
   IDeliveryDate,
   IReviewsResponse,
   IReview,
+  IReviewStats,
 } from '../interfaces';
 import { http } from '../helpers/utils';
 import { adminItemState } from '../helpers/initialState';
@@ -23,6 +25,7 @@ const SingleItem = () => {
   const [item, setItem] = useState<IItem>(adminItemState);
   const [hasNextReview, setHasNextReview] = useState(false);
   const [reviewPage, setReviewPage] = useState(1);
+  const [stats, setStats] = useState<IReviewStats[]>([]);
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [deliveryDate, setDeliveryDate] = useState<IDeliveryDate>({
     day: '',
@@ -52,6 +55,7 @@ const SingleItem = () => {
       setReviews((prevState) => [...prevState, ...response.data.reviews]);
       setHasNextReview(response.data.has_next);
       setReviewPage(response.data.page);
+      setStats(response.data.stats);
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {
         console.log(err.response);
@@ -111,6 +115,24 @@ const SingleItem = () => {
         <Box alignItems="center" display="flex">
           <AiFillStar color="gold" fontSize="2rem" />
           <Heading color="text.secondary">Reviews</Heading>
+        </Box>
+        <Box>
+          {stats.map((stat) => {
+            return (
+              <Box my="1rem" justifyContent="space-around" display="flex" key={nanoid()}>
+                <Text color="text.secondary">{stat.rating} star</Text>
+                <Box borderRadius="md" height="30px" width="200px" bg="gray.200">
+                  <Box
+                    borderRadius="md"
+                    width={`${stat.percent}%`}
+                    bg="gold"
+                    height="30px"
+                  ></Box>
+                </Box>
+                <Text color="text.secondary">{stat.percent}%</Text>
+              </Box>
+            );
+          })}
         </Box>
         <Box>
           {reviews.map((review) => {
