@@ -8,6 +8,7 @@ import { theme } from './theme/theme';
 import './App.css';
 import Navbar from './components/Navbar';
 import CreateAccount from './pages/CreateAccount';
+import CreateReview from './pages/CreateReview';
 import NotFound from './pages/NotFound';
 import EditItem from './pages/Admin/EditItem';
 import Login from './pages/Login';
@@ -103,6 +104,15 @@ function App() {
                   element={
                     <RequireAuth>
                       <Cart />
+                    </RequireAuth>
+                  }
+                />
+
+                <Route
+                  path="/reviews/"
+                  element={
+                    <RequireAuth>
+                      <CreateReview />
                     </RequireAuth>
                   }
                 />

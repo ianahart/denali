@@ -26,6 +26,9 @@ const Home = () => {
       setSaleItem(response.data.on_sale_item);
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {
+        if (err.response.status === 404) {
+          setSearchedItem(marketingItemState);
+        }
         return;
       }
     }
@@ -71,44 +74,46 @@ const Home = () => {
           </Box>
         )}
 
-        <Box mb="1rem" justifySelf="center" minH="400px">
-          <RouterLink to={`/items/${saleItem.id}`}>
-            <Heading
-              mb="1rem"
-              textAlign="center"
-              fontSize="1.5rem"
-              color="text.secondary"
-            >
-              On Sale
-            </Heading>
-          </RouterLink>
-          <Box boxShadow="md" height="400px">
-            <Box color="text.secondary" display="flex">
-              <Text fontWeight="bold" mx="1rem">
-                {saleItem.name}
-              </Text>
-              <Text fontWeight="bold" mx="1rem">
-                {saleItem.size}
-              </Text>
-            </Box>
-            <Box>
-              <Image width="300px" height="300px" src={saleItem.product_url} />
-            </Box>
-            <Box display="flex" p="0.5rem" position="relative">
-              <Text color="text.secondary">${saleItem.price}</Text>
-              <Box
-                top="17px"
-                position="absolute"
-                height="3px"
-                width="60px"
-                bg="gray"
-              ></Box>
-              <Text mx="1rem" color="green" fontWeight="bold">
-                ${saleItem.discount_price}
-              </Text>
+        {saleItem.id !== 0 && (
+          <Box mb="1rem" justifySelf="center" minH="400px">
+            <RouterLink to={`/items/${saleItem.id}`}>
+              <Heading
+                mb="1rem"
+                textAlign="center"
+                fontSize="1.5rem"
+                color="text.secondary"
+              >
+                On Sale
+              </Heading>
+            </RouterLink>
+            <Box boxShadow="md" height="400px">
+              <Box color="text.secondary" display="flex">
+                <Text fontWeight="bold" mx="1rem">
+                  {saleItem.name}
+                </Text>
+                <Text fontWeight="bold" mx="1rem">
+                  {saleItem.size}
+                </Text>
+              </Box>
+              <Box>
+                <Image width="300px" height="300px" src={saleItem.product_url} />
+              </Box>
+              <Box display="flex" p="0.5rem" position="relative">
+                <Text color="text.secondary">${saleItem.price}</Text>
+                <Box
+                  top="17px"
+                  position="absolute"
+                  height="3px"
+                  width="60px"
+                  bg="gray"
+                ></Box>
+                <Text mx="1rem" color="green" fontWeight="bold">
+                  ${saleItem.discount_price}
+                </Text>
+              </Box>
             </Box>
           </Box>
-        </Box>
+        )}
         {orderItem.id !== 0 && (
           <Box mb="1rem" justifySelf="center" minH="400px">
             <RouterLink to={`/items/${orderItem.id}`}>

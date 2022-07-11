@@ -20,7 +20,7 @@ const Orders = () => {
       setPage(response.data.page);
     } catch (err: unknown | AxiosError) {
       if (err instanceof AxiosError && err.response) {
-        console.log(err.response);
+        return;
       }
     }
   };
@@ -58,9 +58,9 @@ const Orders = () => {
             <Box mt="2rem">
               {orders.map((order) => {
                 return (
-                  <RouterLink to={`/items/${order.item_id}`}>
-                    <Box my="1rem" boxShadow="md" p="0.25rem" key={nanoid()}>
-                      <Box display="flex">
+                  <Box key={nanoid()} my="1rem" boxShadow="md" p="0.25rem">
+                    <Box display="flex">
+                      <RouterLink to={`/items/${order.item_id}`}>
                         <Box display="flex" flexDir="column" alignItems="center">
                           <Text color="text.secondary" mb="0.25rem">
                             {order.name}
@@ -72,42 +72,47 @@ const Orders = () => {
                             alt={order.name}
                           />
                         </Box>
-                        <Box display="flex" flexDir="column" justifyContent="center">
-                          <Text color="text.secondary">Ship to:</Text>
-                          <Text
-                            textTransform="uppercase"
-                            fontWeight="bold"
-                            color="text.secondary"
-                          >
-                            {order.street_address}
-                          </Text>
-                          {order.street_address_2 && (
-                            <Text>{order.street_address_2}</Text>
-                          )}
-                          <Text
-                            fontWeight="bold"
-                            textTransform="uppercase"
-                            color="text.secondary"
-                          >
-                            <Box as="span">{order.city} </Box>
-                            <Box as="span">{order.state} </Box>
-                            <Box as="span">{order.zip} </Box>
-                          </Text>
-                        </Box>
-                      </Box>
-                      <Box display="flex" alignItems="center" justifyContent="flex-end">
-                        <Text mx="1rem" fontWeight="bold">
-                          {order.quantity}x
+                      </RouterLink>
+                      <Box display="flex" flexDir="column" justifyContent="center">
+                        <Text color="text.secondary">Ship to:</Text>
+                        <Text
+                          textTransform="uppercase"
+                          fontWeight="bold"
+                          color="text.secondary"
+                        >
+                          {order.street_address}
                         </Text>
-                        <Text color="green">
-                          <Box as="span" pr="1rem" color="text.secondary">
-                            Total:
-                          </Box>
-                          ${order.total}
+                        {order.street_address_2 && <Text>{order.street_address_2}</Text>}
+                        <Text
+                          fontWeight="bold"
+                          textTransform="uppercase"
+                          color="text.secondary"
+                        >
+                          <Box as="span">{order.city} </Box>
+                          <Box as="span">{order.state} </Box>
+                          <Box as="span">{order.zip} </Box>
                         </Text>
                       </Box>
                     </Box>
-                  </RouterLink>
+                    <Box display="flex" alignItems="center" justifyContent="flex-end">
+                      <Text mx="1rem" fontWeight="bold">
+                        {order.quantity}x
+                      </Text>
+                      <Text color="green">
+                        <Box as="span" pr="1rem" color="text.secondary">
+                          Total:
+                        </Box>
+                        ${order.total}
+                      </Text>
+                    </Box>
+                    <Box>
+                      <RouterLink color="blue" to={`/reviews/?id=${order.item_id}`}>
+                        <Text color="purple.primary" textDecoration="underline">
+                          Write Review
+                        </Text>
+                      </RouterLink>
+                    </Box>
+                  </Box>
                 );
               })}
             </Box>

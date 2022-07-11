@@ -97,6 +97,17 @@ export interface ICart {
   quantity: number;
 }
 
+export interface IReview {
+  created_at: string;
+  first_name: string;
+  last_name: string;
+  item: number;
+  user: number;
+  text: string;
+  rating: number;
+  id: number;
+}
+
 export interface ICartResponse {
   message?: string;
   cart: ICart[];
@@ -109,6 +120,13 @@ export interface ISearchResponse {
   has_next: boolean;
   page: number;
   items: ISearchItem[];
+}
+
+export interface IReviewsResponse {
+  message?: string;
+  has_next: boolean;
+  page: number;
+  reviews: IReview[];
 }
 
 export interface IAdminItemResponse {

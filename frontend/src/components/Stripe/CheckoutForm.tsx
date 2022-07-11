@@ -35,6 +35,7 @@ interface ICheckoutFormProps {
 }
 
 const CheckoutForm = ({ form, applyErrors }: ICheckoutFormProps) => {
+  const { setCart } = useContext(CartContext) as ICartContext;
   const navigate = useNavigate();
   const { user } = useContext(UserContext) as IUserContext;
   const { grandTotal, cart } = useContext(CartContext) as ICartContext;
@@ -101,6 +102,8 @@ const CheckoutForm = ({ form, applyErrors }: ICheckoutFormProps) => {
       setLoaded(true);
       setSuccessMsg('Payment succeeded');
       setTimeout(() => {
+        setCart([]);
+
         setSuccessMsg('');
         navigate('/');
       }, 4000);

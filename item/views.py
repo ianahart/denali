@@ -13,6 +13,7 @@ from item.serializers import RetreiveSearchSerializer, DiscountItemSerializer, I
 from item.services.simplestorage import SimpleStorage
 from item.models import Item
 from order.models import Order
+from review.models import Review
 import json
 import logging
 logger = logging.getLogger('django')

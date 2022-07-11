@@ -12,8 +12,12 @@ class SearchManager(models.Manager):
 
     def latest(self, user_id: int):
         searched_item = {}
-        object = Search.objects.all().filter(
-            user_id=user_id).latest('created_at')
+        try:
+            object = Search.objects.all().filter(
+                user_id=user_id).latest('created_at')
+        except DatabaseError as e:
+            print(e)
+            return {}
         searched_item['name'] = object.item.name
         searched_item['size'] = object.item.size
         searched_item['product_url'] = object.item.product_url

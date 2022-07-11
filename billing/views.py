@@ -44,17 +44,25 @@ class StripeCheckoutView(APIView):
                 source=request.data['token']['id'],
             )
 
-            Billing.objects.send_confirmation_email(
-                request.data['cart'],
-                request.data['user'],
-                request.data['shipping_type'],
-                request.data['shipping']
-            )
-            Cart.objects.empty_cart(request.user.id)
-            return Response({
-                'message': 'success'
-            }, status.HTTP_200_OK)
-        except Exception:
+            try:
+                Billing.objects.send_confirmation_email(
+                    request.data['cart'],
+                    request.data['user'],
+                    request.data['shipping_type'],
+                    request.data['shipping']
+                )
+                Cart.objects.empty_cart(request.user.id)
+                return Response({
+                    'message': 'success'
+                }, status.HTTP_200_OK)
+            except Exception:
+                Cart.objects.empty_cart(request.user.id)
+                return Response({
+                    'message': 'success'
+                }, status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
             return Response(
                 {'error': 'Something went wrong when creating stripe checkout session'},
                 status=status.HTTP_400_BAD_REQUEST

@@ -48,9 +48,6 @@ class BillingManager(models.Manager):
                               'total': cart_item['total']
                               })
             total += cart_item['total']
-        print('Total: ', total)
-        print('Shipping: ', shipping)
-        print('Formula : ', int(shipping / 100))
         context = {
             'email': user.email,
             'cart_items': cart_items,
