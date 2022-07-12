@@ -32,6 +32,7 @@ import BillingDetails from './pages/BillingDetails';
 import { CartContext } from './context/cart';
 import ForgotPassword from './pages/ForgotPassword';
 import PasswordReset from './pages/PasswordReset';
+import DeleteAccount from './pages/DeleteAccount';
 
 function App() {
   const { setUser, user } = useContext(UserContext) as IUserContext;
@@ -104,6 +105,15 @@ function App() {
                   element={
                     <RequireAuth>
                       <Cart />
+                    </RequireAuth>
+                  }
+                />
+
+                <Route
+                  path="/delete-account"
+                  element={
+                    <RequireAuth>
+                      <DeleteAccount />
                     </RequireAuth>
                   }
                 />

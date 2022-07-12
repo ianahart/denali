@@ -33,7 +33,6 @@ class CustomUserManager(BaseUserManager):
 
         cxt = {'token': token, 'email': user.email}
         message = render_to_string('forgot-password.html', cxt)
-
         mail = EmailMessage(
             subject='Password Reset:',
             body=message,
@@ -42,15 +41,10 @@ class CustomUserManager(BaseUserManager):
         )
         mail.content_subtype = 'html'
         mail.send()
-
         return {'type': 'ok',
                 'uid': user.id,
                 'token': token
-        }
-
-
-
-
+                }
 
     def logout(self, data: dict[str, str | int]):
         pk, refresh_token = data.values()

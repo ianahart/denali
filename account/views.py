@@ -16,6 +16,33 @@ from account.models import CustomUser
 from account.serializers import UserSerializer
 
 
+class DetailsAPIView(APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    def delete(self, request, pk=None):
+        try:
+
+            email = request.query_params['email']
+            user = CustomUser.objects.all().filter(email=email).first()
+
+            if user is None:
+                raise ObjectDoesNotExist('User does not exist.')
+
+            if user.id != id:
+                raise BadRequest(
+                    'You do not have permission to delete this account.')
+
+            user.delete()
+
+            return Response({
+                'message': 'success'
+            }, status=status.HTTP_200_OK)
+
+        except ObjectDoesNotExist as e:
+            return Response({
+                'errors': str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+
 class RetreiveUserAPIView(APIView):
     permission_classes = [IsAuthenticated, ]
 

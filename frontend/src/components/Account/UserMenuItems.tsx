@@ -32,6 +32,14 @@ const UserMenuItems = () => {
           </ListItem>
 
           <Logout />
+
+          <ListItem my="0.5rem" cursor="pointer">
+            <RouterLink to="/delete-account">
+              <Text color="text.primary" _hover={{ opacity: 0.8 }} role="button">
+                Delete Account
+              </Text>
+            </RouterLink>
+          </ListItem>
         </UnorderedList>
       </Box>
     </Box>
