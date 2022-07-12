@@ -54,10 +54,14 @@ In order for this application to run locally, you will need to signup for the fo
 
 ## Live
 
-### Test account
+### Test accounts
 
 -u bluemangroup@aol.com \
 -p Test12345%
+
+admin \
+-u admin@example.com \
+-p mjnuOC6BM7$$qJCL
 
 ### Email Functionality
 
@@ -67,4 +71,3 @@ In order for email to work you will need to create your own account with a worki
 
 Stripe is in test mode so you will need to use
 **4242 4242 4242 4242** as the card number
-
